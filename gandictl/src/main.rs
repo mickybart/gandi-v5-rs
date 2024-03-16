@@ -10,7 +10,13 @@ use gandi_v5_livedns_api::Api;
 async fn main() -> ExitCode {
     let cli = Cli::init();
 
-    let api = Api::build();
+    let api = match Api::build() {
+        Ok(api) => api,
+        Err(_) => {
+            eprintln!("An error occurred during the Api initialization !");
+            return ExitCode::FAILURE
+        }
+    };
 
     match cli.command {
         ApiCommands::LiveDNS { command } => {

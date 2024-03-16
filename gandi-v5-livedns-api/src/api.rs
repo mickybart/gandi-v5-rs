@@ -1,23 +1,26 @@
 mod domains;
 
+use crate::engine::Engine;
 use std::rc::Rc;
-use crate::common::Common;
 
 pub struct Api {
     pub domains: Domains,
 }
 
 pub struct Domains {
-    common: Rc<Common>,
+    engine: Rc<Engine>,
 }
 
 impl Api {
-    pub fn build() -> Self {
-        let common = Rc::new(Common::build());
+    pub fn build() -> Result<Self, ()> {
+        let engine = match Engine::build() {
+            Ok(engine) => Rc::new(engine),
+            Err(_) => return Err(()),
+        };
 
-        Api {
+        Ok(Api {
             // for future multiple usage of common, use: Rc::clone(&common)
-            domains: Domains { common },
-        }
+            domains: Domains { engine },
+        })
     }
 }

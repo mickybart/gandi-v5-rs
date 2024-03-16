@@ -16,10 +16,10 @@ pub struct DomainInfo {
 
 impl Domains {
     pub async fn list(&self) -> Result<Vec<Domain>, String> {
-        self.common.get("/livedns/domains").await
+        self.engine.get("/livedns/domains").await
     }
 
     pub async fn information(&self, fqdn: &str) -> Result<DomainInfo, String> {
-        self.common.get(&format!("/livedns/domains/{}", fqdn)).await
+        self.engine.get(&format!("/livedns/domains/{}", fqdn)).await
     }
 }

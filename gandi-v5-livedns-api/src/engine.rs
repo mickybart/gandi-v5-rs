@@ -2,13 +2,13 @@ use reqwest::{header, Client};
 use serde::de::DeserializeOwned;
 use std::env;
 
-pub struct Common {
+pub struct Engine {
     client: Client,
     endpoint: String,
 }
 
-impl Common {
-    pub fn build() -> Self {
+impl Engine {
+    pub fn build() -> Result<Self, ()> {
         // Bearer with Personal Access Token
         let bearer_pat = "Bearer ".to_owned() + &env::var("GANDI_V5_PAT").unwrap();
 
@@ -26,15 +26,15 @@ impl Common {
         auth_value.set_sensitive(true);
         headers.insert("authorization", auth_value);
 
-        let client = Client::builder()
-            .default_headers(headers)
-            .build()
-            .expect("Failed to create the reqwest client !");
+        let client = match Client::builder().default_headers(headers).build() {
+            Ok(client) => client,
+            Err(_) => return Err(()),
+        };
 
-        Common {
+        Ok(Engine {
             client,
             endpoint: "https://api.gandi.net/v5".to_owned(),
-        }
+        })
     }
 
     pub async fn get<T>(&self, url: &str) -> Result<T, String>

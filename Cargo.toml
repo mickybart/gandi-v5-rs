@@ -1,0 +1,7 @@
+[workspace]
+resolver = "2"
+
+members = [
+    "gandi-v5-livedns-api",
+    "gandictl",
+]

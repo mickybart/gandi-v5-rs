@@ -5,3 +5,7 @@ members = [
     "gandi-v5-livedns-api",
     "gandictl",
 ]
+
+[profile.release]
+opt-level = "s"
+strip = true

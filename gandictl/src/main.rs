@@ -1,11 +1,13 @@
 mod cli;
 mod livedns;
 
+use std::process::ExitCode;
+
 use cli::{ApiCommands, Cli, LiveDnsCommands, LiveDnsGetCommands};
 use gandi_v5_livedns_api::Api;
 
 #[tokio::main]
-async fn main() {
+async fn main() -> ExitCode {
     let cli = Cli::init();
 
     let api = Api::build();
@@ -17,9 +19,9 @@ async fn main() {
                     match command {
                         LiveDnsGetCommands::Domains { fqdn } => {
                             if let Some(fqdn) = fqdn {
-                                livedns::domains::information(&api, &fqdn).await;
+                                livedns::domains::information(&api, &fqdn).await
                             } else {
-                                livedns::domains::list(&api).await;
+                                livedns::domains::list(&api).await
                             }
                         },
                     }

@@ -15,28 +15,43 @@ pub struct DomainInfo {
 }
 
 impl Domains {
-    pub async fn list(&self) -> Vec<Domain> {
+    pub async fn list(&self) -> Result<Vec<Domain>,String> {
         let response = self.common.client.get(
             format!("{}/livedns/domains", self.common.endpoint)
         ).send().await;
 
-        let response = response.expect("error");
+        let response = match response {
+            Ok(response) => response,
+            Err(_) => return Err("Network issue !".to_owned()),
+        };
     
-        // let text = response.text().await.expect("error");
-        let domains = response.json::<Vec<Domain>>().await.expect("error");
-    
-        domains
+        if response.status().is_success() {
+            match response.json::<Vec<Domain>>().await {
+                Ok(domains) => Ok(domains),
+                Err(_) => Err("Payload can't be decoded !".to_owned()),
+            }
+        } else {
+            Err(format!("Server returned {} !", response.status()))
+        }
     }
 
-    pub async fn information(&self, fqdn: &str) -> DomainInfo {
+    pub async fn information(&self, fqdn: &str) -> Result<DomainInfo,String> {
         let response = self.common.client.get(
             format!("{}/livedns/domains/{}", self.common.endpoint, fqdn)
         ).send().await;
 
-        let response = response.expect("error");
+        let response = match response {
+            Ok(response) => response,
+            Err(_) => return Err("Network issue !".to_owned()),
+        };
 
-        let domain_info = response.json::<DomainInfo>().await.expect("error");
-
-        domain_info
+        if response.status().is_success() {
+            match response.json::<DomainInfo>().await {
+                Ok(domain_info) => Ok(domain_info),
+                Err(_) => Err("Payload can't be decoded !".to_owned()),
+            }
+        } else {
+            Err(format!("Server returned {} !", response.status()))
+        }
     }
 }

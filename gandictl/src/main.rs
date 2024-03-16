@@ -19,19 +19,19 @@ async fn main() -> ExitCode {
     };
 
     match cli.command {
-        ApiCommands::LiveDNS { command } => {
-            match command {
-                LiveDnsCommands::Get { command } => {
-                    match command {
-                        LiveDnsGetCommands::Domains { fqdn } => {
-                            if let Some(fqdn) = fqdn {
-                                livedns::domains::information(&api, &fqdn).await
-                            } else {
-                                livedns::domains::list(&api).await
-                            }
-                        },
-                    }
-                },
+        ApiCommands::LiveDNS { command } => cli_livedns(command, &api).await,
+    }
+}
+
+async fn cli_livedns(command: LiveDnsCommands, api: &Api) -> ExitCode {
+    match command {
+        LiveDnsCommands::Get { command } => match command {
+            LiveDnsGetCommands::Domains { fqdn } => {
+                if let Some(fqdn) = fqdn {
+                    livedns::domains::information(&api, &fqdn).await
+                } else {
+                    livedns::domains::list(&api).await
+                }
             }
         },
     }

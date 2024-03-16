@@ -14,7 +14,7 @@ pub enum ApiCommands {
     /// LiveDNS API (https://api.gandi.net/docs/livedns/)
     LiveDNS {
         #[command(subcommand)]
-        command: LiveDnsCommands
+        command: LiveDnsCommands,
     },
 }
 
@@ -23,7 +23,7 @@ pub enum LiveDnsCommands {
     /// Display one or many resources.
     Get {
         #[command(subcommand)]
-        command: LiveDnsGetCommands
+        command: LiveDnsGetCommands,
     },
 }
 
@@ -32,7 +32,7 @@ pub enum LiveDnsGetCommands {
     /// Get resources relative to domains.
     Domains {
         /// Domain name
-        fqdn: Option<String>
+        fqdn: Option<String>,
     },
 }
 

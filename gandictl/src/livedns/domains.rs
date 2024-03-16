@@ -1,12 +1,12 @@
-use std::process::ExitCode;
 use gandi_v5_livedns_api::Api;
+use std::process::ExitCode;
 
 pub async fn list(api: &Api) -> ExitCode {
     let domains = match api.domains.list().await {
         Ok(domains) => domains,
         Err(e) => {
             eprintln!("{e}");
-            return ExitCode::FAILURE
+            return ExitCode::FAILURE;
         }
     };
 
@@ -22,7 +22,7 @@ pub async fn information(api: &Api, fqdn: &str) -> ExitCode {
         Ok(domain_info) => domain_info,
         Err(e) => {
             eprintln!("{e}");
-            return ExitCode::FAILURE
+            return ExitCode::FAILURE;
         }
     };
 

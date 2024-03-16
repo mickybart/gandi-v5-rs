@@ -1,9 +1,10 @@
-use std::env;
 use reqwest::{header, Client};
+use serde::de::DeserializeOwned;
+use std::env;
 
 pub struct Common {
-    pub client: Client,
-    pub endpoint: String,
+    client: Client,
+    endpoint: String,
 }
 
 impl Common {
@@ -33,6 +34,31 @@ impl Common {
         Common {
             client,
             endpoint: "https://api.gandi.net/v5".to_owned(),
+        }
+    }
+
+    pub async fn get<T>(&self, url: &str) -> Result<T, String>
+    where
+        T: DeserializeOwned,
+    {
+        let response = self
+            .client
+            .get(format!("{}{}", self.endpoint, url))
+            .send()
+            .await;
+
+        let response = match response {
+            Ok(response) => response,
+            Err(_) => return Err("Network issue !".to_owned()),
+        };
+
+        if response.status().is_success() {
+            match response.json::<T>().await {
+                Ok(t) => Ok(t),
+                Err(_) => Err("Payload can't be decoded !".to_owned()),
+            }
+        } else {
+            Err(format!("Server returned {} !", response.status()))
         }
     }
 }

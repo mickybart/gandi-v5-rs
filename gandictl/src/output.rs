@@ -1,27 +1,14 @@
-use std::process::ExitCode;
 use serde::Serialize;
+use std::error::Error;
 
-pub fn handler_yaml<T>(result : Result<T, String>) -> ExitCode
+pub fn handler_yaml<T>(data: T) -> Result<(), Box<dyn Error>>
+// only handle serde_yaml::Error but simplifying caller code by using dyn Error
 where
-    T: Serialize
+    T: Serialize,
 {
-    let result = match result {
-        Ok(result) => result,
-        Err(e) => {
-            eprintln!("{e}");
-            return ExitCode::FAILURE;
-        }
-    };
-
-    let yaml = match serde_yaml::to_string(&result) {
-        Ok(yaml) => yaml,
-        Err(e) => {
-            eprintln!("{e}");
-            return ExitCode::FAILURE;
-        }
-    };
+    let yaml = serde_yaml::to_string(&data)?;
 
     println!("{}", yaml);
 
-    ExitCode::SUCCESS
+    Ok(())
 }

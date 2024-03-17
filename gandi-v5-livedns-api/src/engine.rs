@@ -1,6 +1,6 @@
 use reqwest::{header, Client};
 use serde::de::DeserializeOwned;
-use std::env;
+use std::{env, error::Error};
 
 pub struct Engine {
     client: Client,
@@ -8,13 +8,13 @@ pub struct Engine {
 }
 
 impl Engine {
-    pub fn build() -> Result<Self, String> {
+    pub fn build() -> Result<Self, Box<dyn Error>> {
         // Bearer with Personal Access Token
-        let bearer_pat = match env::var("GANDI_V5_PAT") {
+        let pat = match env::var("GANDI_V5_PAT") {
             Ok(pat) => pat,
-            Err(_) => return Err("Environment variable GANDI_V5_PAT is not set !".to_owned()),
+            Err(_) => return Err("environment variable 'GANDI_V5_PAT' not found".into()),
         };
-        let bearer_pat = "Bearer ".to_owned() + &bearer_pat;
+        let bearer_pat = "Bearer ".to_owned() + &pat;
 
         // Headers
         // Content-Type: application/json
@@ -25,15 +25,11 @@ impl Engine {
         //     header::HeaderValue::from_static("application/json"),
         // );
 
-        let mut auth_value = header::HeaderValue::from_str(&bearer_pat)
-            .expect("Personal Access Token header is invalid !");
+        let mut auth_value = header::HeaderValue::from_str(&bearer_pat)?;
         auth_value.set_sensitive(true);
         headers.insert("authorization", auth_value);
 
-        let client = match Client::builder().default_headers(headers).build() {
-            Ok(client) => client,
-            Err(_) => return Err("An error occurred during client creation !".to_owned()),
-        };
+        let client = Client::builder().default_headers(headers).build()?;
 
         Ok(Engine {
             client,
@@ -41,7 +37,7 @@ impl Engine {
         })
     }
 
-    pub async fn get<T>(&self, url: &str) -> Result<T, String>
+    pub async fn get<T>(&self, url: &str) -> Result<T, Box<dyn Error>>
     where
         T: DeserializeOwned,
     {
@@ -49,20 +45,12 @@ impl Engine {
             .client
             .get(format!("{}{}", self.endpoint, url))
             .send()
-            .await;
-
-        let response = match response {
-            Ok(response) => response,
-            Err(_) => return Err("Network issue !".to_owned()),
-        };
+            .await?;
 
         if response.status().is_success() {
-            match response.json::<T>().await {
-                Ok(t) => Ok(t),
-                Err(_) => Err("Payload can't be decoded !".to_owned()),
-            }
+            Ok(response.json::<T>().await?)
         } else {
-            Err(format!("Server returned {} !", response.status()))
+            Err(format!("Server returned {} !", response.status()).into())
         }
     }
 }

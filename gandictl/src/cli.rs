@@ -37,7 +37,7 @@ pub enum LiveDnsGetCommands {
         /// Records
         #[arg(short, long)]
         records: bool,
-    }
+    },
 }
 
 impl Cli {

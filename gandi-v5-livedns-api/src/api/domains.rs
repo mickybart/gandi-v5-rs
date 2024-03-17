@@ -1,20 +1,20 @@
 use crate::api::Domains;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Domain {
     pub fqdn: String,
     pub domain_href: String,
     pub domain_records_href: String,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct DomainInfo {
     pub fqdn: String,
     pub automatic_snapshot: Option<bool>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Record {
     pub rrset_name: String,
     pub rrset_type: String,

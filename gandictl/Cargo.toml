@@ -8,4 +8,6 @@ edition = "2021"
 [dependencies]
 clap = { version = "4.5.3", features = ["derive"] }
 gandi-v5-livedns-api = { path = "../gandi-v5-livedns-api" }
+serde = { version = "1.0.197", features = ["derive"] }
+serde_yaml = "0.9.33"
 tokio = { version = "1.36.0", features = ["macros", "rt-multi-thread"] }

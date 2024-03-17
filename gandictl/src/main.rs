@@ -1,10 +1,11 @@
 mod cli;
-mod livedns;
+mod output;
 
 use std::process::ExitCode;
 
 use cli::{ApiCommands, Cli, LiveDnsCommands, LiveDnsGetCommands};
 use gandi_v5_livedns_api::Api;
+use output::handler_yaml;
 
 #[tokio::main]
 async fn main() -> ExitCode {
@@ -14,7 +15,7 @@ async fn main() -> ExitCode {
         Ok(api) => api,
         Err(e) => {
             eprintln!("{e}");
-            return ExitCode::FAILURE
+            return ExitCode::FAILURE;
         }
     };
 
@@ -26,14 +27,14 @@ async fn main() -> ExitCode {
 async fn cli_livedns(command: LiveDnsCommands, api: &Api) -> ExitCode {
     match command {
         LiveDnsCommands::Get { command } => match command {
-            LiveDnsGetCommands::Domains {  } => livedns::domains::list(&api).await,
+            LiveDnsGetCommands::Domains {} => handler_yaml(api.domains.list().await),
             LiveDnsGetCommands::Domain { fqdn, records } => {
-                if ! records {
-                    livedns::domains::information(&api, &fqdn).await
+                if !records {
+                    handler_yaml(api.domains.information(&fqdn).await)
                 } else {
-                    livedns::domains::list_records(&api, &fqdn).await
+                    handler_yaml(api.domains.list_records(&fqdn).await)
                 }
-            },
+            }
         },
     }
 }

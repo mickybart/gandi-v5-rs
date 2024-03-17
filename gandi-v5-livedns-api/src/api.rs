@@ -12,11 +12,8 @@ pub struct Domains {
 }
 
 impl Api {
-    pub fn build() -> Result<Self, ()> {
-        let engine = match Engine::build() {
-            Ok(engine) => Rc::new(engine),
-            Err(_) => return Err(()),
-        };
+    pub fn build() -> Result<Self, String> {
+        let engine = Rc::new(Engine::build()?);
 
         Ok(Api {
             // for future multiple usage of common, use: Rc::clone(&common)

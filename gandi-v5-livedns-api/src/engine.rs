@@ -8,9 +8,13 @@ pub struct Engine {
 }
 
 impl Engine {
-    pub fn build() -> Result<Self, ()> {
+    pub fn build() -> Result<Self, String> {
         // Bearer with Personal Access Token
-        let bearer_pat = "Bearer ".to_owned() + &env::var("GANDI_V5_PAT").unwrap();
+        let bearer_pat = match env::var("GANDI_V5_PAT") {
+            Ok(pat) => pat,
+            Err(_) => return Err("Environment variable GANDI_V5_PAT is not set !".to_owned()),
+        };
+        let bearer_pat = "Bearer ".to_owned() + &bearer_pat;
 
         // Headers
         // Content-Type: application/json
@@ -28,7 +32,7 @@ impl Engine {
 
         let client = match Client::builder().default_headers(headers).build() {
             Ok(client) => client,
-            Err(_) => return Err(()),
+            Err(_) => return Err("An error occurred during client creation !".to_owned()),
         };
 
         Ok(Engine {

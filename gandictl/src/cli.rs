@@ -3,7 +3,6 @@ use clap::{Parser, Subcommand};
 /// Control Gandi services
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
-#[command(next_line_help = true)]
 pub struct Cli {
     #[command(subcommand)]
     pub command: ApiCommands,
@@ -30,10 +29,15 @@ pub enum LiveDnsCommands {
 #[derive(Subcommand)]
 pub enum LiveDnsGetCommands {
     /// Get resources relative to domains.
-    Domains {
+    Domains {},
+    /// Get resources realtive to one domain name.
+    Domain {
         /// Domain name
-        fqdn: Option<String>,
-    },
+        fqdn: String,
+        /// Records
+        #[arg(short, long)]
+        records: bool,
+    }
 }
 
 impl Cli {

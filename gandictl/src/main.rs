@@ -12,8 +12,8 @@ async fn main() -> ExitCode {
 
     let api = match Api::build() {
         Ok(api) => api,
-        Err(_) => {
-            eprintln!("An error occurred during the Api initialization !");
+        Err(e) => {
+            eprintln!("{e}");
             return ExitCode::FAILURE
         }
     };
@@ -26,13 +26,14 @@ async fn main() -> ExitCode {
 async fn cli_livedns(command: LiveDnsCommands, api: &Api) -> ExitCode {
     match command {
         LiveDnsCommands::Get { command } => match command {
-            LiveDnsGetCommands::Domains { fqdn } => {
-                if let Some(fqdn) = fqdn {
+            LiveDnsGetCommands::Domains {  } => livedns::domains::list(&api).await,
+            LiveDnsGetCommands::Domain { fqdn, records } => {
+                if ! records {
                     livedns::domains::information(&api, &fqdn).await
                 } else {
-                    livedns::domains::list(&api).await
+                    livedns::domains::list_records(&api, &fqdn).await
                 }
-            }
+            },
         },
     }
 }

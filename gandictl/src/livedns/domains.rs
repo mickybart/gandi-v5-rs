@@ -30,3 +30,17 @@ pub async fn information(api: &Api, fqdn: &str) -> ExitCode {
 
     ExitCode::SUCCESS
 }
+
+pub async fn list_records(api: &Api, fqdn: &str) -> ExitCode {
+    let records = match api.domains.list_records(fqdn).await {
+        Ok(records) => records,
+        Err(e) => {
+            eprint!("{e}");
+            return ExitCode::FAILURE;
+        }
+    };
+
+    println!("{:?}", records);
+
+    ExitCode::SUCCESS
+}

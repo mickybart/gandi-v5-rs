@@ -14,6 +14,14 @@ pub struct DomainInfo {
     pub automatic_snapshot: Option<bool>,
 }
 
+#[derive(Debug, Deserialize)]
+pub struct Record {
+    pub rrset_name: String,
+    pub rrset_type: String,
+    pub rrset_values: Vec<String>,
+    pub rrset_ttl: Option<u32>,
+}
+
 impl Domains {
     pub async fn list(&self) -> Result<Vec<Domain>, String> {
         self.engine.get("/livedns/domains").await
@@ -21,5 +29,9 @@ impl Domains {
 
     pub async fn information(&self, fqdn: &str) -> Result<DomainInfo, String> {
         self.engine.get(&format!("/livedns/domains/{}", fqdn)).await
+    }
+
+    pub async fn list_records(&self, fqdn: &str) -> Result<Vec<Record>, String> {
+        self.engine.get(&format!("/livedns/domains/{}/records", fqdn)).await
     }
 }

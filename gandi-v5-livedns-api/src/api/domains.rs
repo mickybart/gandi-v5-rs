@@ -33,9 +33,33 @@ impl Domains {
         self.engine.get(&format!("/livedns/domains/{}", fqdn)).await
     }
 
-    pub async fn list_records(&self, fqdn: &str) -> Result<Vec<Record>, Box<dyn Error>> {
+    pub async fn records(&self, fqdn: &str) -> Result<Vec<Record>, Box<dyn Error>> {
         self.engine
             .get(&format!("/livedns/domains/{}/records", fqdn))
+            .await
+    }
+
+    pub async fn records_by_name(
+        &self,
+        fqdn: &str,
+        rrset_name: &str,
+    ) -> Result<Vec<Record>, Box<dyn Error>> {
+        self.engine
+            .get(&format!("/livedns/domains/{}/records/{}", fqdn, rrset_name))
+            .await
+    }
+
+    pub async fn records_by_name_and_type(
+        &self,
+        fqdn: &str,
+        rrset_name: &str,
+        rrset_type: &str,
+    ) -> Result<Record, Box<dyn Error>> {
+        self.engine
+            .get(&format!(
+                "/livedns/domains/{}/records/{}/{}",
+                fqdn, rrset_name, rrset_type
+            ))
             .await
     }
 }

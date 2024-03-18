@@ -34,10 +34,22 @@ pub enum LiveDnsGetCommands {
     Domain {
         /// Domain name
         fqdn: String,
-        /// Records
-        #[arg(short, long)]
-        records: bool,
     },
+    /// Get resources relative to domain records.
+    Records {
+        /// Domain name
+        fqdn: String,
+    },
+    /// Get resources relative to on domain record.
+    Record {
+        /// Domain name
+        fqdn: String,
+        /// Record name
+        rrset_name: String,
+        /// Record type
+        #[arg(short, long)]
+        rrset_type: Option<String>,
+    }
 }
 
 impl Cli {

@@ -47,10 +47,6 @@ impl Engine {
             .send()
             .await?;
 
-        if response.status().is_success() {
-            Ok(response.json::<T>().await?)
-        } else {
-            Err(format!("Server returned {} !", response.status()).into())
-        }
+        Ok(response.error_for_status()?.json::<T>().await?)
     }
 }

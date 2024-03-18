@@ -21,23 +21,20 @@ async fn main() -> Result<(), Box<dyn Error>> {
 async fn cli_livedns(command: LiveDnsCommands, api: &Api) -> Result<(), Box<dyn Error>> {
     match command {
         LiveDnsCommands::Get { command } => match command {
-            LiveDnsGetCommands::Domains {} => handler_yaml(api.domains.list().await?),
-            LiveDnsGetCommands::Domain { fqdn } => {
-                handler_yaml(api.domains.information(&fqdn).await?)
-            }
-            LiveDnsGetCommands::Records { fqdn } => handler_yaml(api.domains.records(&fqdn).await?),
+            LiveDnsGetCommands::Domains {} => handler_yaml(api.domains().await?),
+            LiveDnsGetCommands::Domain { fqdn } => handler_yaml(api.domain(&fqdn).await?),
+            LiveDnsGetCommands::Records { fqdn, rrset_name } => match rrset_name {
+                Some(rrset_name) => handler_yaml(api.records_by_name(&fqdn, &rrset_name).await?),
+                None => handler_yaml(api.records(&fqdn).await?),
+            },
             LiveDnsGetCommands::Record {
                 fqdn,
                 rrset_name,
                 rrset_type,
-            } => match rrset_type {
-                Some(rrset_type) => handler_yaml(
-                    api.domains
-                        .records_by_name_and_type(&fqdn, &rrset_name, &rrset_type)
-                        .await?,
-                ),
-                None => handler_yaml(api.domains.records_by_name(&fqdn, &rrset_name).await?),
-            },
+            } => handler_yaml(
+                api.record_by_name_and_type(&fqdn, &rrset_name, &rrset_type)
+                    .await?,
+            ),
         },
     }
 }

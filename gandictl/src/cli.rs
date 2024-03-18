@@ -28,28 +28,30 @@ pub enum LiveDnsCommands {
 
 #[derive(Subcommand)]
 pub enum LiveDnsGetCommands {
-    /// Get resources relative to domains.
+    /// List of domains handled by LiveDNS
     Domains {},
-    /// Get resources realtive to one domain name.
+    /// Show domain's properties
     Domain {
         /// Domain name
         fqdn: String,
     },
-    /// Get resources relative to domain records.
+    /// List records or named records associated with a domain
     Records {
         /// Domain name
         fqdn: String,
+        /// Name of the record
+        #[arg(short, long)]
+        rrset_name: Option<String>,
     },
-    /// Get resources relative to on domain record.
+    /// Get a single record with its name and type
     Record {
         /// Domain name
         fqdn: String,
-        /// Record name
+        /// Name of the record
         rrset_name: String,
-        /// Record type
-        #[arg(short, long)]
-        rrset_type: Option<String>,
-    }
+        /// Type of the record
+        rrset_type: String,
+    },
 }
 
 impl Cli {

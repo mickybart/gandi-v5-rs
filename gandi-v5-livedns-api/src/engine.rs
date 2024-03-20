@@ -17,13 +17,8 @@ impl Engine {
         let bearer_pat = "Bearer ".to_owned() + &pat;
 
         // Headers
-        // Content-Type: application/json
         // Authorization: Bearer PERSONAL_ACCESS_TOKEN
         let mut headers = header::HeaderMap::new();
-        // headers.insert(
-        //     "content-type",
-        //     header::HeaderValue::from_static("application/json"),
-        // );
 
         let mut auth_value = header::HeaderValue::from_str(&bearer_pat)?;
         auth_value.set_sensitive(true);
@@ -48,5 +43,45 @@ impl Engine {
             .await?;
 
         Ok(response.error_for_status()?.json::<T>().await?)
+    }
+
+    pub async fn post(&self, url: &str, body: String) -> Result<(), reqwest::Error> {
+        let response = self
+            .client
+            .post(format!("{}{}", self.endpoint, url))
+            .header("content-type", "application/json")
+            .body(body)
+            .send()
+            .await?;
+
+        response.error_for_status()?;
+
+        Ok(())
+    }
+
+    pub async fn put(&self, url: &str, body: String) -> Result<(), reqwest::Error> {
+        let response = self
+            .client
+            .put(format!("{}{}", self.endpoint, url))
+            .header("content-type", "application/json")
+            .body(body)
+            .send()
+            .await?;
+
+        response.error_for_status()?;
+
+        Ok(())
+    }
+
+    pub async fn delete(&self, url: &str) -> Result<(), reqwest::Error> {
+        let response = self
+            .client
+            .delete(format!("{}{}", self.endpoint, url))
+            .send()
+            .await?;
+
+        response.error_for_status()?;
+
+        Ok(())
     }
 }

@@ -1,3 +1,5 @@
+use std::ops::RangeInclusive;
+
 use clap::{Parser, Subcommand};
 
 /// Control Gandi services
@@ -6,6 +8,12 @@ use clap::{Parser, Subcommand};
 pub struct Cli {
     #[command(subcommand)]
     pub command: ApiCommands,
+}
+
+impl Cli {
+    pub fn init() -> Self {
+        Cli::parse()
+    }
 }
 
 #[derive(Subcommand)]
@@ -23,6 +31,21 @@ pub enum LiveDnsCommands {
     Get {
         #[command(subcommand)]
         command: LiveDnsGetCommands,
+    },
+    /// Overwrite one or many resources.
+    Apply {
+        #[command(subcommand)]
+        command: LiveDnsApplyCommands,
+    },
+    /// Create one or many resources.
+    Create {
+        #[command(subcommand)]
+        command: LiveDnsCreateCommands,
+    },
+    /// Delete one or many resources.
+    Delete {
+        #[command(subcommand)]
+        command: LiveDnsDeleteCommands,
     },
 }
 
@@ -54,8 +77,71 @@ pub enum LiveDnsGetCommands {
     },
 }
 
-impl Cli {
-    pub fn init() -> Self {
-        Cli::parse()
+#[derive(Subcommand)]
+pub enum LiveDnsApplyCommands {
+    /// Overwrites a single record with {rrset_name} and {rrset_type}
+    Record {
+        /// Domain name
+        fqdn: String,
+        /// Name of the record
+        rrset_name: String,
+        /// Type of the record
+        rrset_type: String,
+        /// A list of values for this record (comma delimiter)
+        #[arg(long,required=true,num_args=1..,value_delimiter=',')]
+        rrset_values: Vec<String>,
+        /// The time in seconds that DNS resolvers should cache this record (300 to 2592000)
+        #[arg(long,value_parser = rrset_ttl_in_range)]
+        rrset_ttl: Option<u32>,
+    },
+}
+
+#[derive(Subcommand)]
+pub enum LiveDnsCreateCommands {
+    /// Create a new record for {rrset_name} and {rrset_type}
+    Record {
+        /// Domain name
+        fqdn: String,
+        /// Name of the record
+        rrset_name: String,
+        /// Type of the record
+        rrset_type: String,
+        /// A list of values for this record (comma delimiter)
+        #[arg(long,required=true,num_args=1..,value_delimiter=',')]
+        rrset_values: Vec<String>,
+        /// The time in seconds that DNS resolvers should cache this record (300 to 2592000)
+        #[arg(long,value_parser = rrset_ttl_in_range)]
+        rrset_ttl: Option<u32>,
+    },
+}
+
+#[derive(Subcommand)]
+pub enum LiveDnsDeleteCommands {
+    /// Delete a single record with {rrset_name} and {rrset_type}
+    Record {
+        /// Domain name
+        fqdn: String,
+        /// Name of the record
+        rrset_name: String,
+        /// Type of the record
+        rrset_type: String,
+    },
+}
+
+const RRSET_TTL_RANGE: RangeInclusive<usize> = 300..=2592000;
+
+fn rrset_ttl_in_range(rrset_ttl: &str) -> Result<u32, String> {
+    let rrset_ttl: usize = rrset_ttl
+        .parse()
+        .map_err(|_| format!("'{rrset_ttl} isn't a ttl number'"))?;
+
+    if RRSET_TTL_RANGE.contains(&rrset_ttl) {
+        Ok(rrset_ttl as u32)
+    } else {
+        Err(format!(
+            "rrset_ttl not in range {}-{}",
+            RRSET_TTL_RANGE.start(),
+            RRSET_TTL_RANGE.end()
+        ))
     }
 }

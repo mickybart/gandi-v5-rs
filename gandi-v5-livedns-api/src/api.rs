@@ -1,5 +1,5 @@
 mod domains;
-mod records;
+pub mod records;
 
 use crate::engine::Engine;
 use std::error::Error;

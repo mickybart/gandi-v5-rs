@@ -96,3 +96,100 @@ impl Api {
         self.engine.delete(&url).await
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::{records::UpsertRecord, Api};
+
+    #[tokio::test]
+    async fn records_404() {
+        let api = Api::build(crate::Endpoint::Sandbox);
+
+        assert!(api.is_ok());
+
+        let api = api.unwrap();
+
+        let res = api.records("pygoscelis-sandbox.org").await;
+
+        assert!(res.is_err());
+
+        assert_eq!(res.err().unwrap().as_ref().to_string(), "HTTP status client error (404 Not Found) for url (https://api.sandbox.gandi.net/v5/livedns/domains/pygoscelis-sandbox.org/records)");
+    }
+
+    #[tokio::test]
+    async fn record_by_name_404() {
+        let api = Api::build(crate::Endpoint::Sandbox);
+
+        assert!(api.is_ok());
+
+        let api = api.unwrap();
+
+        let res = api.records_by_name("pygoscelis-sandbox.org", "test").await;
+
+        assert!(res.is_err());
+
+        assert_eq!(res.err().unwrap().as_ref().to_string(), "HTTP status client error (404 Not Found) for url (https://api.sandbox.gandi.net/v5/livedns/domains/pygoscelis-sandbox.org/records/test)");
+    }
+
+    #[tokio::test]
+    async fn record_by_name_and_type_404() {
+        let api = Api::build(crate::Endpoint::Sandbox);
+
+        assert!(api.is_ok());
+
+        let api = api.unwrap();
+
+        let res = api.record_by_name_and_type("pygoscelis-sandbox.org", "test", "A").await;
+
+        assert!(res.is_err());
+
+        assert_eq!(res.err().unwrap().as_ref().to_string(), "HTTP status client error (404 Not Found) for url (https://api.sandbox.gandi.net/v5/livedns/domains/pygoscelis-sandbox.org/records/test/A)");
+    }
+
+    #[tokio::test]
+    async fn create_record_by_name_and_type_404() {
+        let api = Api::build(crate::Endpoint::Sandbox);
+
+        assert!(api.is_ok());
+
+        let api = api.unwrap();
+
+        let record = UpsertRecord { rrset_values: vec!["127.0.01".to_owned()], rrset_ttl: Some(300) };
+        let res = api.create_record_by_name_and_type("pygoscelis-sandbox.org", "test", "A", &record).await;
+
+        assert!(res.is_err());
+
+        assert_eq!(res.err().unwrap().as_ref().to_string(), "HTTP status client error (404 Not Found) for url (https://api.sandbox.gandi.net/v5/livedns/domains/pygoscelis-sandbox.org/records/test/A)");
+    }
+
+    #[tokio::test]
+    async fn upsert_record_by_name_and_type_404() {
+        let api = Api::build(crate::Endpoint::Sandbox);
+
+        assert!(api.is_ok());
+
+        let api = api.unwrap();
+
+        let record = UpsertRecord { rrset_values: vec!["127.0.01".to_owned()], rrset_ttl: Some(300) };
+        let res = api.upsert_record_by_name_and_type("pygoscelis-sandbox.org", "test", "A", &record).await;
+
+        assert!(res.is_err());
+
+        assert_eq!(res.err().unwrap().as_ref().to_string(), "HTTP status client error (404 Not Found) for url (https://api.sandbox.gandi.net/v5/livedns/domains/pygoscelis-sandbox.org/records/test/A)");
+    }
+
+    #[tokio::test]
+    async fn delete_record_by_name_and_type_404() {
+        let api = Api::build(crate::Endpoint::Sandbox);
+
+        assert!(api.is_ok());
+
+        let api = api.unwrap();
+
+        let res = api.delete_record_by_name_and_type("pygoscelis-sandbox.org", "test", "A").await;
+
+        assert!(res.is_err());
+
+        assert_eq!(res.err().unwrap().to_string(), "HTTP status client error (404 Not Found) for url (https://api.sandbox.gandi.net/v5/livedns/domains/pygoscelis-sandbox.org/records/test/A)");
+    }
+}

@@ -4,7 +4,7 @@ mod output;
 use std::{error::Error, process::ExitCode};
 
 use cli::*;
-use gandi_v5_livedns_api::{records::UpsertRecord, Api};
+use gandi_v5_livedns_api::{records::UpsertRecord, Api, Endpoint};
 use output::handler_yaml;
 
 #[tokio::main]
@@ -17,14 +17,14 @@ async fn main() -> ExitCode {
             eprintln!("{}", e.as_ref());
 
             ExitCode::FAILURE
-        },
+        }
     }
 }
 
 async fn main_delegation() -> Result<(), Box<dyn Error>> {
     let cli = Cli::init();
 
-    let api = Api::build()?;
+    let api = Api::build(Endpoint::Prod)?;
 
     match cli.command {
         ApiCommands::LiveDNS { command } => match command {

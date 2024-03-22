@@ -7,8 +7,14 @@ pub struct Engine {
     endpoint: String,
 }
 
+pub enum Endpoint {
+    Prod,
+    Sandbox,
+    Custom(String),
+}
+
 impl Engine {
-    pub fn build() -> Result<Self, Box<dyn Error>> {
+    pub fn build(endpoint: Endpoint) -> Result<Self, Box<dyn Error>> {
         // Bearer with Personal Access Token
         let pat = match env::var("GANDI_V5_PAT") {
             Ok(pat) => pat,
@@ -28,7 +34,11 @@ impl Engine {
 
         Ok(Engine {
             client,
-            endpoint: "https://api.gandi.net/v5".to_owned(),
+            endpoint: match endpoint {
+                Endpoint::Prod => "https://api.gandi.net/v5".to_owned(),
+                Endpoint::Sandbox => "https://api.sandbox.gandi.net/v5".to_owned(),
+                Endpoint::Custom(endpoint) => endpoint,
+            }
         })
     }
 
@@ -83,5 +93,86 @@ impl Engine {
         response.error_for_status()?;
 
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::env;
+
+    use serde::Deserialize;
+    use serde_json::Map;
+
+    use super::*;
+
+    #[test]
+    fn build_engine_pat_unset() {
+        env::remove_var("GANDI_V5_PAT");
+        let engine = Engine::build(Endpoint::Prod);
+
+        assert_eq!(engine.is_err(), true);
+        assert_eq!(engine.err().unwrap().as_ref().to_string(), "environment variable 'GANDI_V5_PAT' not found");
+    }
+
+    #[test]
+    fn build_engine_prod() {
+        env::set_var("GANDI_V5_PAT", "secret");
+
+        let engine = Engine::build(Endpoint::Prod);
+
+        assert_eq!(engine.is_ok(), true);
+
+        let engine = engine.unwrap();
+
+        assert_eq!(engine.endpoint, "https://api.gandi.net/v5");
+    }
+    
+    #[test]
+    fn build_engine_sandbox() {
+        let engine = Engine::build(Endpoint::Sandbox);
+
+        assert_eq!(engine.is_ok(), true);
+
+        let engine = engine.unwrap();
+
+        assert_eq!(engine.endpoint, "https://api.sandbox.gandi.net/v5");
+    }
+
+    #[test]
+    fn build_engine_custom() {
+        let engine = Engine::build(Endpoint::Custom("https://api.local".to_owned()));
+
+        assert_eq!(engine.is_ok(), true);
+
+        let engine = engine.unwrap();
+
+        assert_eq!(engine.endpoint, "https://api.local");
+    }
+
+    #[tokio::test]
+    async fn check_bearer_header() {
+        let backup_pat = env::var("GANDI_V5_PAT").unwrap();
+        env::set_var("GANDI_V5_PAT", "secret");
+
+        let engine = Engine::build(Endpoint::Custom("https://httpbin.org".to_owned())).unwrap();
+
+        #[derive(Deserialize)]
+        struct Headers {
+            headers: Map<String, serde_json::Value>,
+        }
+
+        let response: Result<Headers, Box<dyn Error>> = engine.get("/headers").await;
+
+        env::set_var("GANDI_V5_PAT", backup_pat);
+
+        assert_eq!(response.is_ok(), true);
+
+        let response = response.unwrap();
+
+        assert!(response.headers.contains_key("Authorization"));
+
+        let bearer = response.headers.get("Authorization").unwrap().as_str().unwrap();
+
+        assert_eq!(bearer, "Bearer secret");
     }
 }

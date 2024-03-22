@@ -145,3 +145,39 @@ fn rrset_ttl_in_range(rrset_ttl: &str) -> Result<u32, String> {
         ))
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::env;
+
+    use crate::Cli;
+
+    use super::rrset_ttl_in_range;
+
+    #[test]
+    fn rrset_ttl_in_range_ok() {
+        let res = rrset_ttl_in_range("600");
+
+        assert!(res.is_ok());
+        assert_eq!(res.unwrap(), 600);
+    }
+
+    #[test]
+    fn rrset_ttl_not_in_range() {
+        let res = rrset_ttl_in_range("200");
+
+        assert!(res.is_err());
+        assert_eq!(res.err().unwrap(), "rrset_ttl not in range 300-2592000");
+
+        let res = rrset_ttl_in_range("3000000");
+        assert_eq!(res.err().unwrap(), "rrset_ttl not in range 300-2592000");
+    }
+
+    #[test]
+    fn rrset_ttl_is_not_a_number() {
+        let res = rrset_ttl_in_range("not_a_number");
+
+        assert!(res.is_err());
+        assert_eq!(res.err().unwrap(), "'not_a_number isn't a ttl number'");
+    }
+}

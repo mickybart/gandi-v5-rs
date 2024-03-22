@@ -1,7 +1,7 @@
 mod cli;
 mod output;
 
-use std::{error::Error, process::ExitCode};
+use std::{env, error::Error, process::ExitCode};
 
 use cli::*;
 use gandi_v5_livedns_api::{records::UpsertRecord, Api, Endpoint};
@@ -26,13 +26,15 @@ async fn main() -> ExitCode {
 async fn main_delegation() -> Result<(), Box<dyn Error>> {
     let cli = Cli::init();
 
+    let personal_access_token = env::var("GANDI_V5_PAT")?;
+
     let endpoint = if cli.sandbox {
         Endpoint::Sandbox
     } else {
         Endpoint::Prod
     };
 
-    let api = Api::build(endpoint)?;
+    let api = Api::build(endpoint, &personal_access_token)?;
 
     match cli.command {
         ApiCommands::LiveDNS { command } => match command {

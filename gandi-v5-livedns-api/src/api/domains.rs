@@ -27,7 +27,7 @@ impl Api {
     /// 
     /// Example:
     /// ```no_run
-    /// let api = Api::build(Endpoint::Prod)?;
+    /// let api = Api::build(Endpoint::Prod, "token")?;
     /// 
     /// let domains = api.domains().await?;
     /// 
@@ -43,7 +43,7 @@ impl Api {
     /// 
     /// Example:
     /// ```no_run
-    /// let api = Api::build(Endpoint::Prod)?;
+    /// let api = Api::build(Endpoint::Prod, "token")?;
     /// 
     /// let domain_info = api.domain("example.org").await?;
     /// 
@@ -62,7 +62,9 @@ mod tests {
 
     #[tokio::test]
     async fn domains_empty() {
-        let api = Api::build(crate::Endpoint::Sandbox);
+        let pat = env::var("GANDI_V5_SANDBOX_PAT").unwrap();
+
+        let api = Api::build(crate::Endpoint::Sandbox, &pat);
 
         assert!(api.is_ok());
 
@@ -79,7 +81,9 @@ mod tests {
 
     #[tokio::test]
     async fn domain_404() {
-        let api = Api::build(crate::Endpoint::Sandbox);
+        let pat = env::var("GANDI_V5_SANDBOX_PAT").unwrap();
+
+        let api = Api::build(crate::Endpoint::Sandbox, &pat);
 
         assert!(api.is_ok());
 
@@ -94,18 +98,13 @@ mod tests {
 
     #[tokio::test]
     async fn domain_403() {
-        let backup_pat = env::var("GANDI_V5_PAT").unwrap();
-        env::set_var("GANDI_V5_PAT", "INVALID");
-
-        let api = Api::build(crate::Endpoint::Sandbox);
+        let api = Api::build(crate::Endpoint::Sandbox, "INVALID");
 
         assert!(api.is_ok());
 
         let api = api.unwrap();
 
         let res = api.domain("pygoscelis-sandbox.org").await;
-
-        env::set_var("GANDI_V5_PAT", backup_pat);
 
         assert!(res.is_err());
 

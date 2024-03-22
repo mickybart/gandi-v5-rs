@@ -12,9 +12,9 @@
 //! 
 //! #[tokio::main]
 //! async fn main() -> Result<(), Box<dyn Error>> {
-//!     env::set_var("GANDI_V5_PAT", "your_own_pat");
+//!     let personal_access_token = env::var("GANDI_V5_PAT")?;
 //! 
-//!     let api = Api::build(Endpoint::Prod)?;
+//!     let api = Api::build(Endpoint::Prod, &personal_access_token)?;
 //! }
 //! ```
 

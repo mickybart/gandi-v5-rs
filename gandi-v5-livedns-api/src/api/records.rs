@@ -16,6 +16,7 @@ pub struct Record {
 
 /// Type used to create or update a single record
 /// 
+/// Example:
 /// ```no_run
 /// let record = UpsertRecord { rrset_values: vec!["127.0.0.1".to_owned()], rrset_ttl: Some(300) };
 /// ```
@@ -32,7 +33,7 @@ impl Api {
     /// 
     /// Example:
     /// ```no_run
-    /// let api = Api::build(Endpoint::Prod)?;
+    /// let api = Api::build(Endpoint::Prod, "token")?;
     /// 
     /// let records = api.records("example.org").await?;
     /// 
@@ -50,7 +51,7 @@ impl Api {
     /// 
     /// Example:
     /// ```no_run
-    /// let api = Api::build(Endpoint::Prod)?;
+    /// let api = Api::build(Endpoint::Prod, "token")?;
     /// 
     /// // get records for test.example.org
     /// let records = api.records_by_name("example.org", "test").await?;
@@ -73,7 +74,7 @@ impl Api {
     /// 
     /// Example:
     /// ```no_run
-    /// let api = Api::build(Endpoint::Prod)?;
+    /// let api = Api::build(Endpoint::Prod, "token")?;
     /// 
     /// // get TXT record for test.example.org
     /// let record = api.record_by_name_and_type("example.org", "test", "TXT").await?;
@@ -100,7 +101,7 @@ impl Api {
     /// 
     /// Example:
     /// ```no_run
-    /// let api = Api::build(Endpoint::Prod)?;
+    /// let api = Api::build(Endpoint::Prod, "token")?;
     /// 
     /// // create multiple A records for test.example.org
     /// let record = UpsertRecord { rrset_values: vec!["10.0.0.1".to_owned(), "10.0.0.2".to_owned()], rrset_ttl: Some(300) };
@@ -129,7 +130,7 @@ impl Api {
     /// 
     /// Example:
     /// ```no_run
-    /// let api = Api::build(Endpoint::Prod)?;
+    /// let api = Api::build(Endpoint::Prod, "token")?;
     /// 
     /// // create multiple A records for test.example.org
     /// let record = UpsertRecord { rrset_values: vec!["10.0.0.1".to_owned(), "10.0.0.2".to_owned()], rrset_ttl: Some(300) };
@@ -158,7 +159,7 @@ impl Api {
     /// 
     /// Example:
     /// ```no_run
-    /// let api = Api::build(Endpoint::Prod)?;
+    /// let api = Api::build(Endpoint::Prod, "token")?;
     /// 
     /// // delete A records for test.example.org
     /// api.delete_record_by_name_and_type("example.org", "test", "A").await?;
@@ -180,11 +181,14 @@ impl Api {
 
 #[cfg(test)]
 mod tests {
+    use std::env;
     use crate::{records::UpsertRecord, Api};
 
     #[tokio::test]
     async fn records_404() {
-        let api = Api::build(crate::Endpoint::Sandbox);
+        let pat = env::var("GANDI_V5_SANDBOX_PAT").unwrap();
+
+        let api = Api::build(crate::Endpoint::Sandbox, &pat);
 
         assert!(api.is_ok());
 
@@ -199,7 +203,9 @@ mod tests {
 
     #[tokio::test]
     async fn record_by_name_404() {
-        let api = Api::build(crate::Endpoint::Sandbox);
+        let pat = env::var("GANDI_V5_SANDBOX_PAT").unwrap();
+
+        let api = Api::build(crate::Endpoint::Sandbox, &pat);
 
         assert!(api.is_ok());
 
@@ -214,7 +220,9 @@ mod tests {
 
     #[tokio::test]
     async fn record_by_name_and_type_404() {
-        let api = Api::build(crate::Endpoint::Sandbox);
+        let pat = env::var("GANDI_V5_SANDBOX_PAT").unwrap();
+
+        let api = Api::build(crate::Endpoint::Sandbox, &pat);
 
         assert!(api.is_ok());
 
@@ -229,7 +237,9 @@ mod tests {
 
     #[tokio::test]
     async fn create_record_by_name_and_type_404() {
-        let api = Api::build(crate::Endpoint::Sandbox);
+        let pat = env::var("GANDI_V5_SANDBOX_PAT").unwrap();
+
+        let api = Api::build(crate::Endpoint::Sandbox, &pat);
 
         assert!(api.is_ok());
 
@@ -245,7 +255,9 @@ mod tests {
 
     #[tokio::test]
     async fn upsert_record_by_name_and_type_404() {
-        let api = Api::build(crate::Endpoint::Sandbox);
+        let pat = env::var("GANDI_V5_SANDBOX_PAT").unwrap();
+
+        let api = Api::build(crate::Endpoint::Sandbox, &pat);
 
         assert!(api.is_ok());
 
@@ -261,7 +273,9 @@ mod tests {
 
     #[tokio::test]
     async fn delete_record_by_name_and_type_404() {
-        let api = Api::build(crate::Endpoint::Sandbox);
+        let pat = env::var("GANDI_V5_SANDBOX_PAT").unwrap();
+
+        let api = Api::build(crate::Endpoint::Sandbox, &pat);
 
         assert!(api.is_ok());
 

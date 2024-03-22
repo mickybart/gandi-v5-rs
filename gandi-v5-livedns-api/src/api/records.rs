@@ -1,8 +1,11 @@
+//! Records scope
+
 use std::error::Error;
 
 use crate::api::Api;
 use serde::{Deserialize, Serialize};
 
+/// Type representing a record
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Record {
     pub rrset_name: String,
@@ -11,6 +14,11 @@ pub struct Record {
     pub rrset_ttl: Option<u32>,
 }
 
+/// Type used to create or update a single record
+/// 
+/// ```no_run
+/// let record = UpsertRecord { rrset_values: vec!["127.0.0.1".to_owned()], rrset_ttl: Some(300) };
+/// ```
 #[derive(Debug, Serialize)]
 pub struct UpsertRecord {
     pub rrset_values: Vec<String>,
@@ -18,12 +26,37 @@ pub struct UpsertRecord {
 }
 
 impl Api {
+    /// List records associated with a domain
+    /// 
+    /// GET on <https://api.gandi.net/v5/livedns/domains/{fqdn}/records>
+    /// 
+    /// Example:
+    /// ```no_run
+    /// let api = Api::build(Endpoint::Prod)?;
+    /// 
+    /// let records = api.records("example.org").await?;
+    /// 
+    /// println!("{:?}", records);
+    /// ```
     pub async fn records(&self, fqdn: &str) -> Result<Vec<Record>, Box<dyn Error>> {
         self.engine
             .get(&format!("/livedns/domains/{}/records", fqdn))
             .await
     }
 
+    /// List records named {rrset_name} associated with this domain
+    /// 
+    /// GET on <https://api.gandi.net/v5/livedns/domains/{fqdn}/records/{rrset_name}>
+    /// 
+    /// Example:
+    /// ```no_run
+    /// let api = Api::build(Endpoint::Prod)?;
+    /// 
+    /// // get records for test.example.org
+    /// let records = api.records_by_name("example.org", "test").await?;
+    /// 
+    /// println!("{:?}", records);
+    /// ```
     pub async fn records_by_name(
         &self,
         fqdn: &str,
@@ -34,6 +67,19 @@ impl Api {
             .await
     }
 
+    /// Get a single single record with its name and type
+    /// 
+    /// GET on <https://api.gandi.net/v5/livedns/domains/{fqdn}/records/{rrset_name}/{rrset_type}>
+    /// 
+    /// Example:
+    /// ```no_run
+    /// let api = Api::build(Endpoint::Prod)?;
+    /// 
+    /// // get TXT record for test.example.org
+    /// let record = api.record_by_name_and_type("example.org", "test", "TXT").await?;
+    /// 
+    /// println!("{:?}", record);
+    /// ```
     pub async fn record_by_name_and_type(
         &self,
         fqdn: &str,
@@ -48,6 +94,18 @@ impl Api {
             .await
     }
 
+    /// Create a new record whose name and type are defined by the path
+    /// 
+    /// POST on <https://api.gandi.net/v5/livedns/domains/{fqdn}/records/{rrset_name}/{rrset_type}>
+    /// 
+    /// Example:
+    /// ```no_run
+    /// let api = Api::build(Endpoint::Prod)?;
+    /// 
+    /// // create multiple A records for test.example.org
+    /// let record = UpsertRecord { rrset_values: vec!["10.0.0.1".to_owned(), "10.0.0.2".to_owned()], rrset_ttl: Some(300) };
+    /// api.create_record_by_name_and_type("example.org", "test", "A", &record).await?;
+    /// ```
     pub async fn create_record_by_name_and_type(
         &self,
         fqdn: &str,
@@ -65,6 +123,18 @@ impl Api {
         Ok(self.engine.post(&url, body).await?)
     }
 
+    /// Overwrites a single record with {rrset_name} and {rrset_type}
+    /// 
+    /// PUT on <https://api.gandi.net/v5/livedns/domains/{fqdn}/records/{rrset_name}/{rrset_type}>
+    /// 
+    /// Example:
+    /// ```no_run
+    /// let api = Api::build(Endpoint::Prod)?;
+    /// 
+    /// // create multiple A records for test.example.org
+    /// let record = UpsertRecord { rrset_values: vec!["10.0.0.1".to_owned(), "10.0.0.2".to_owned()], rrset_ttl: Some(300) };
+    /// api.upsert_record_by_name_and_type("example.org", "test", "A", &record).await?;
+    /// ```
     pub async fn upsert_record_by_name_and_type(
         &self,
         fqdn: &str,
@@ -82,6 +152,17 @@ impl Api {
         Ok(self.engine.put(&url, body).await?)
     }
 
+    /// Delete record with {rrset_name} and {rrset_type}
+    /// 
+    /// DELETE on <https://api.gandi.net/v5/livedns/domains/{fqdn}/records/{rrset_name}/{rrset_type}>
+    /// 
+    /// Example:
+    /// ```no_run
+    /// let api = Api::build(Endpoint::Prod)?;
+    /// 
+    /// // delete A records for test.example.org
+    /// api.delete_record_by_name_and_type("example.org", "test", "A").await?;
+    /// ```
     pub async fn delete_record_by_name_and_type(
         &self,
         fqdn: &str,

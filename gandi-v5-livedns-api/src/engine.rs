@@ -1,12 +1,18 @@
+//! Types for working with RESTful Api.
+
 use reqwest::{header, Client};
 use serde::de::DeserializeOwned;
 use std::{env, error::Error};
 
+/// The engine ables to auth and query Gandi Api.
 pub struct Engine {
+    /// A `Client` with Personal Access Token set to authenticate against Gandi Api.
     client: Client,
+    /// The prod, sandbox or custom endpoint of the Gandi Api.
     endpoint: String,
 }
 
+/// Used to select the endpoint required.
 pub enum Endpoint {
     Prod,
     Sandbox,
@@ -14,6 +20,16 @@ pub enum Endpoint {
 }
 
 impl Engine {
+    /// Returns a new [`Engine`] object.
+    /// 
+    /// This function will build a new `Engine` object that will be used
+    /// internally by `Api` object to authenticate and query Gandi RESTful Api.
+    /// 
+    /// ```no_run
+    /// let engine = Engine::build(Endpoint::Prod)?;
+    /// let engine = Engine::build(Endpoint::Sandbox)?;
+    /// let engine = Engine::build(Endpoint::Custom {"https://localhost".to_owned()})?;
+    /// ```
     pub fn build(endpoint: Endpoint) -> Result<Self, Box<dyn Error>> {
         // Bearer with Personal Access Token
         let pat = match env::var("GANDI_V5_PAT") {

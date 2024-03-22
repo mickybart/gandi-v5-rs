@@ -1,8 +1,11 @@
+//! Domains scope
+
 use std::error::Error;
 
 use crate::api::Api;
 use serde::{Deserialize, Serialize};
 
+/// Type representing a Domain
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Domain {
     pub fqdn: String,
@@ -10,6 +13,7 @@ pub struct Domain {
     pub domain_records_href: String,
 }
 
+/// Type representing Domain's properties
 #[derive(Debug, Deserialize, Serialize)]
 pub struct DomainInfo {
     pub fqdn: String,
@@ -17,10 +21,34 @@ pub struct DomainInfo {
 }
 
 impl Api {
+    /// List of domains handled by LiveDNS
+    /// 
+    /// GET on <https://api.gandi.net/v5/livedns/domains>
+    /// 
+    /// Example:
+    /// ```no_run
+    /// let api = Api::build(Endpoint::Prod)?;
+    /// 
+    /// let domains = api.domains().await?;
+    /// 
+    /// println!("{:?}", domains);
+    /// ```
     pub async fn domains(&self) -> Result<Vec<Domain>, Box<dyn Error>> {
         self.engine.get("/livedns/domains").await
     }
 
+    /// Show domain's properties
+    /// 
+    /// GET on <https://api.gandi.net/v5/livedns/domains/{fqdn}>
+    /// 
+    /// Example:
+    /// ```no_run
+    /// let api = Api::build(Endpoint::Prod)?;
+    /// 
+    /// let domain_info = api.domain("example.org").await?;
+    /// 
+    /// println!("{:?}", domain_info);
+    /// ```
     pub async fn domain(&self, fqdn: &str) -> Result<DomainInfo, Box<dyn Error>> {
         self.engine.get(&format!("/livedns/domains/{}", fqdn)).await
     }

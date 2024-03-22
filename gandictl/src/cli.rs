@@ -18,7 +18,7 @@ impl Cli {
 
 #[derive(Subcommand)]
 pub enum ApiCommands {
-    /// LiveDNS API (https://api.gandi.net/docs/livedns/)
+    /// LiveDNS API (<https://api.gandi.net/docs/livedns/>)
     LiveDNS {
         #[command(subcommand)]
         command: LiveDnsCommands,

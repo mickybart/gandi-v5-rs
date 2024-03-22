@@ -8,6 +8,7 @@ use gandi_v5_livedns_api::{records::UpsertRecord, Api, Endpoint};
 use output::handler_yaml;
 
 #[tokio::main]
+#[cfg(not(tarpaulin_include))]
 async fn main() -> ExitCode {
     let terminated = main_delegation().await;
 
@@ -21,6 +22,7 @@ async fn main() -> ExitCode {
     }
 }
 
+#[cfg(not(tarpaulin_include))]
 async fn main_delegation() -> Result<(), Box<dyn Error>> {
     let cli = Cli::init();
 

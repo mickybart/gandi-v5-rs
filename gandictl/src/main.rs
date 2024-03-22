@@ -26,7 +26,13 @@ async fn main() -> ExitCode {
 async fn main_delegation() -> Result<(), Box<dyn Error>> {
     let cli = Cli::init();
 
-    let api = Api::build(Endpoint::Prod)?;
+    let endpoint = if cli.sandbox {
+        Endpoint::Sandbox
+    } else {
+        Endpoint::Prod
+    };
+
+    let api = Api::build(endpoint)?;
 
     match cli.command {
         ApiCommands::LiveDNS { command } => match command {

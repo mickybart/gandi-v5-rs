@@ -8,6 +8,9 @@ use clap::{Parser, Subcommand};
 pub struct Cli {
     #[command(subcommand)]
     pub command: ApiCommands,
+    /// Gandi Sandbox Api
+    #[arg(short)]
+    pub sandbox: bool,
 }
 
 impl Cli {

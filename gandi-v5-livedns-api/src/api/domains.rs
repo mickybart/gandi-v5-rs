@@ -1,4 +1,4 @@
-//! Domains scope
+//! A subset of LiveDNS Api relative to domains queries
 
 use std::error::Error;
 
@@ -8,15 +8,16 @@ use serde::{Deserialize, Serialize};
 /// Type representing a Domain
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Domain {
+    /// Domain name
     pub fqdn: String,
-    pub domain_href: String,
-    pub domain_records_href: String,
 }
 
 /// Type representing Domain's properties
 #[derive(Debug, Deserialize, Serialize)]
 pub struct DomainInfo {
+    /// Domain name
     pub fqdn: String,
+    /// True if new snapshots are automatically created when a modification is made to this domain's records
     pub automatic_snapshot: Option<bool>,
 }
 
@@ -25,7 +26,8 @@ impl Api {
     ///
     /// GET on <https://api.gandi.net/v5/livedns/domains>
     ///
-    /// Example:
+    /// # Examples:
+    ///
     /// ```no_run
     /// let api = Api::build(Endpoint::Prod, "token")?;
     ///
@@ -41,7 +43,8 @@ impl Api {
     ///
     /// GET on <https://api.gandi.net/v5/livedns/domains/{fqdn}>
     ///
-    /// Example:
+    /// # Example:
+    ///
     /// ```no_run
     /// let api = Api::build(Endpoint::Prod, "token")?;
     ///

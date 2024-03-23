@@ -1,11 +1,15 @@
+#![warn(missing_docs, rust_2018_idioms, unreachable_pub)]
+#![forbid(unsafe_code)]
+
+//! gandictl controls the gandi.net management console.
+
 mod cli;
 mod output;
-
-use std::{env, error::Error, process::ExitCode};
 
 use cli::*;
 use gandi_v5_livedns_api::{records::UpsertRecord, Api, Endpoint};
 use output::handler_yaml;
+use std::{env, error::Error, process::ExitCode};
 
 #[tokio::main]
 #[cfg(not(tarpaulin_include))]

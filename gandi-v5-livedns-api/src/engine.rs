@@ -5,7 +5,7 @@ use serde::de::DeserializeOwned;
 use std::error::Error;
 
 /// The engine ables to auth and query Gandi Api.
-pub struct Engine {
+pub(crate) struct Engine {
     /// A `Client` with Personal Access Token set to authenticate against Gandi Api.
     client: Client,
     /// The prod, sandbox or custom endpoint of the Gandi Api.
@@ -28,12 +28,16 @@ impl Engine {
     /// This function will build a new `Engine` object that will be used
     /// internally by `Api` object to authenticate and query Gandi RESTful Api.
     ///
+    /// # Examples
+    ///
     /// ```no_run
-    /// let engine = Engine::build(Endpoint::Prod)?;
-    /// let engine = Engine::build(Endpoint::Sandbox)?;
-    /// let engine = Engine::build(Endpoint::Custom {"https://localhost".to_owned()})?;
+    /// let personal_access_token = "token".to_owned();
+    ///
+    /// let engine = Engine::build(Endpoint::Prod, &personal_access_token)?;
+    /// let engine = Engine::build(Endpoint::Sandbox, &personal_access_token)?;
+    /// let engine = Engine::build(Endpoint::Custom {"https://localhost".to_owned()}, &personal_access_token)?;
     /// ```
-    pub fn build(endpoint: Endpoint, pat: &str) -> Result<Self, Box<dyn Error>> {
+    pub(crate) fn build(endpoint: Endpoint, pat: &str) -> Result<Self, Box<dyn Error>> {
         // Bearer with Personal Access Token
         let bearer_pat = "Bearer ".to_owned() + pat;
 
@@ -57,7 +61,7 @@ impl Engine {
         })
     }
 
-    pub async fn get<T>(&self, url: &str) -> Result<T, Box<dyn Error>>
+    pub(crate) async fn get<T>(&self, url: &str) -> Result<T, Box<dyn Error>>
     where
         T: DeserializeOwned,
     {
@@ -70,7 +74,7 @@ impl Engine {
         Ok(response.error_for_status()?.json::<T>().await?)
     }
 
-    pub async fn post(&self, url: &str, body: String) -> Result<(), reqwest::Error> {
+    pub(crate) async fn post(&self, url: &str, body: String) -> Result<(), reqwest::Error> {
         let response = self
             .client
             .post(format!("{}{}", self.endpoint, url))
@@ -84,7 +88,7 @@ impl Engine {
         Ok(())
     }
 
-    pub async fn put(&self, url: &str, body: String) -> Result<(), reqwest::Error> {
+    pub(crate) async fn put(&self, url: &str, body: String) -> Result<(), reqwest::Error> {
         let response = self
             .client
             .put(format!("{}{}", self.endpoint, url))
@@ -98,7 +102,7 @@ impl Engine {
         Ok(())
     }
 
-    pub async fn delete(&self, url: &str) -> Result<(), reqwest::Error> {
+    pub(crate) async fn delete(&self, url: &str) -> Result<(), reqwest::Error> {
         let response = self
             .client
             .delete(format!("{}{}", self.endpoint, url))
@@ -113,8 +117,6 @@ impl Engine {
 
 #[cfg(test)]
 mod tests {
-    use std::env;
-
     use serde::Deserialize;
     use serde_json::Map;
 

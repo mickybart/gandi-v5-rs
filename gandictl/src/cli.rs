@@ -5,22 +5,22 @@ use clap::{Parser, Subcommand};
 /// Control Gandi services
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
-pub struct Cli {
+pub(crate) struct Cli {
     #[command(subcommand)]
-    pub command: ApiCommands,
+    pub(crate) command: ApiCommands,
     /// Gandi Sandbox Api
     #[arg(short)]
-    pub sandbox: bool,
+    pub(crate) sandbox: bool,
 }
 
 impl Cli {
-    pub fn init() -> Self {
+    pub(crate) fn init() -> Self {
         Cli::parse()
     }
 }
 
 #[derive(Subcommand)]
-pub enum ApiCommands {
+pub(crate) enum ApiCommands {
     /// LiveDNS API (<https://api.gandi.net/docs/livedns/>)
     LiveDNS {
         #[command(subcommand)]
@@ -29,7 +29,7 @@ pub enum ApiCommands {
 }
 
 #[derive(Subcommand)]
-pub enum LiveDnsCommands {
+pub(crate) enum LiveDnsCommands {
     /// Display one or many resources.
     Get {
         #[command(subcommand)]
@@ -53,7 +53,7 @@ pub enum LiveDnsCommands {
 }
 
 #[derive(Subcommand)]
-pub enum LiveDnsGetCommands {
+pub(crate) enum LiveDnsGetCommands {
     /// List of domains handled by LiveDNS
     Domains {},
     /// Show domain's properties
@@ -81,7 +81,7 @@ pub enum LiveDnsGetCommands {
 }
 
 #[derive(Subcommand)]
-pub enum LiveDnsApplyCommands {
+pub(crate) enum LiveDnsApplyCommands {
     /// Overwrites a single record with {rrset_name} and {rrset_type}
     Record {
         /// Domain name
@@ -100,7 +100,7 @@ pub enum LiveDnsApplyCommands {
 }
 
 #[derive(Subcommand)]
-pub enum LiveDnsCreateCommands {
+pub(crate) enum LiveDnsCreateCommands {
     /// Create a new record for {rrset_name} and {rrset_type}
     Record {
         /// Domain name
@@ -119,7 +119,7 @@ pub enum LiveDnsCreateCommands {
 }
 
 #[derive(Subcommand)]
-pub enum LiveDnsDeleteCommands {
+pub(crate) enum LiveDnsDeleteCommands {
     /// Delete a single record with {rrset_name} and {rrset_type}
     Record {
         /// Domain name
@@ -151,10 +151,6 @@ fn rrset_ttl_in_range(rrset_ttl: &str) -> Result<u32, String> {
 
 #[cfg(test)]
 mod tests {
-    use std::env;
-
-    use crate::Cli;
-
     use super::rrset_ttl_in_range;
 
     #[test]

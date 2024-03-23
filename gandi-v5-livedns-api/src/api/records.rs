@@ -1,4 +1,4 @@
-//! Records scope
+//! A subset of LiveDNS Api relative to records queries
 
 use std::error::Error;
 
@@ -20,7 +20,8 @@ pub struct Record {
 
 /// Type used to create or update a single record
 ///
-/// Example:
+/// # Examples:
+///
 /// ```no_run
 /// let record = UpsertRecord { rrset_values: vec!["127.0.0.1".to_owned()], rrset_ttl: Some(300) };
 /// ```
@@ -37,7 +38,8 @@ impl Api {
     ///
     /// GET on <https://api.gandi.net/v5/livedns/domains/{fqdn}/records>
     ///
-    /// Example:
+    /// # Examples:
+    ///
     /// ```no_run
     /// let api = Api::build(Endpoint::Prod, "token")?;
     ///
@@ -55,7 +57,8 @@ impl Api {
     ///
     /// GET on <https://api.gandi.net/v5/livedns/domains/{fqdn}/records/{rrset_name}>
     ///
-    /// Example:
+    /// # Examples:
+    ///
     /// ```no_run
     /// let api = Api::build(Endpoint::Prod, "token")?;
     ///
@@ -78,7 +81,8 @@ impl Api {
     ///
     /// GET on <https://api.gandi.net/v5/livedns/domains/{fqdn}/records/{rrset_name}/{rrset_type}>
     ///
-    /// Example:
+    /// # Examples:
+    ///
     /// ```no_run
     /// let api = Api::build(Endpoint::Prod, "token")?;
     ///
@@ -105,7 +109,8 @@ impl Api {
     ///
     /// POST on <https://api.gandi.net/v5/livedns/domains/{fqdn}/records/{rrset_name}/{rrset_type}>
     ///
-    /// Example:
+    /// # Examples:
+    ///
     /// ```no_run
     /// let api = Api::build(Endpoint::Prod, "token")?;
     ///
@@ -134,7 +139,8 @@ impl Api {
     ///
     /// PUT on <https://api.gandi.net/v5/livedns/domains/{fqdn}/records/{rrset_name}/{rrset_type}>
     ///
-    /// Example:
+    /// # Examples:
+    ///
     /// ```no_run
     /// let api = Api::build(Endpoint::Prod, "token")?;
     ///
@@ -163,7 +169,8 @@ impl Api {
     ///
     /// DELETE on <https://api.gandi.net/v5/livedns/domains/{fqdn}/records/{rrset_name}/{rrset_type}>
     ///
-    /// Example:
+    /// # Examples:
+    ///
     /// ```no_run
     /// let api = Api::build(Endpoint::Prod, "token")?;
     ///

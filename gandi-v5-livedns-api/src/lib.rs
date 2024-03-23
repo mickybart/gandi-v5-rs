@@ -1,13 +1,13 @@
-#![warn(missing_docs, rust_2018_idioms)]
+#![warn(missing_docs, rust_2018_idioms, unreachable_pub)]
 #![forbid(unsafe_code)]
 
 //! Gandi LiveDNS Api
 //!
 //! Provides an abstration on top of Gandi LiveDNS RESTful Api.
 //!
-//! # Examples
+//! A [personal access token](https://docs.gandi.net/en/managing_an_organization/organizations/personal_access_token.html#personal-access-tokens) is required
 //!
-//! You need to create your own personal access token (pat) in the Gandi.net console.
+//! # Examples
 //!
 //! ```
 //! use std:env;
@@ -24,6 +24,7 @@
 mod api;
 mod engine;
 
+pub use api::domains;
 pub use api::records;
 pub use api::Api;
 pub use engine::Endpoint;

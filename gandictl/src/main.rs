@@ -138,3 +138,156 @@ async fn livedns_delete(command: LiveDnsDeleteCommands, api: &Api) -> Result<(),
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::livedns_apply;
+    use crate::livedns_create;
+    use crate::livedns_delete;
+    use crate::livedns_get;
+    use crate::Api;
+    use std::env;
+
+    #[tokio::test]
+    async fn get_domains() {
+        let pat = env::var("GANDI_V5_SANDBOX_PAT").unwrap();
+        let api = Api::build(crate::Endpoint::Sandbox, &pat).unwrap();
+
+        let res = livedns_get(crate::LiveDnsGetCommands::Domains {}, &api).await;
+
+        assert!(res.is_ok());
+    }
+
+    #[tokio::test]
+    async fn get_domain_404() {
+        let pat = env::var("GANDI_V5_SANDBOX_PAT").unwrap();
+        let api = Api::build(crate::Endpoint::Sandbox, &pat).unwrap();
+
+        let res = livedns_get(
+            crate::LiveDnsGetCommands::Domain {
+                fqdn: "pygoscelis-sandbox.org".to_owned(),
+            },
+            &api,
+        )
+        .await;
+
+        assert!(res.is_err());
+        assert_eq!(res.unwrap_err().as_ref().to_string(), "HTTP status client error (404 Not Found) for url (https://api.sandbox.gandi.net/v5/livedns/domains/pygoscelis-sandbox.org)");
+    }
+
+    #[tokio::test]
+    async fn get_records_404() {
+        let pat = env::var("GANDI_V5_SANDBOX_PAT").unwrap();
+        let api = Api::build(crate::Endpoint::Sandbox, &pat).unwrap();
+
+        let res = livedns_get(
+            crate::LiveDnsGetCommands::Records {
+                fqdn: "pygoscelis-sandbox.org".to_owned(),
+                rrset_name: None,
+            },
+            &api,
+        )
+        .await;
+
+        assert!(res.is_err());
+        assert_eq!(res.unwrap_err().as_ref().to_string(), "HTTP status client error (404 Not Found) for url (https://api.sandbox.gandi.net/v5/livedns/domains/pygoscelis-sandbox.org/records)");
+    }
+
+    #[tokio::test]
+    async fn get_records_name_404() {
+        let pat = env::var("GANDI_V5_SANDBOX_PAT").unwrap();
+        let api = Api::build(crate::Endpoint::Sandbox, &pat).unwrap();
+
+        let res = livedns_get(
+            crate::LiveDnsGetCommands::Records {
+                fqdn: "pygoscelis-sandbox.org".to_owned(),
+                rrset_name: Some("test".to_owned()),
+            },
+            &api,
+        )
+        .await;
+
+        assert!(res.is_err());
+        assert_eq!(res.unwrap_err().as_ref().to_string(), "HTTP status client error (404 Not Found) for url (https://api.sandbox.gandi.net/v5/livedns/domains/pygoscelis-sandbox.org/records/test)");
+    }
+
+    #[tokio::test]
+    async fn get_record_404() {
+        let pat = env::var("GANDI_V5_SANDBOX_PAT").unwrap();
+        let api = Api::build(crate::Endpoint::Sandbox, &pat).unwrap();
+
+        let res = livedns_get(
+            crate::LiveDnsGetCommands::Record {
+                fqdn: "pygoscelis-sandbox.org".to_owned(),
+                rrset_name: "test".to_owned(),
+                rrset_type: "A".to_owned(),
+            },
+            &api,
+        )
+        .await;
+
+        assert!(res.is_err());
+        assert_eq!(res.unwrap_err().as_ref().to_string(), "HTTP status client error (404 Not Found) for url (https://api.sandbox.gandi.net/v5/livedns/domains/pygoscelis-sandbox.org/records/test/A)");
+    }
+
+    #[tokio::test]
+    async fn create_record_404() {
+        let pat = env::var("GANDI_V5_SANDBOX_PAT").unwrap();
+        let api = Api::build(crate::Endpoint::Sandbox, &pat).unwrap();
+
+        let res = livedns_create(
+            crate::LiveDnsCreateCommands::Record {
+                fqdn: "pygoscelis-sandbox.org".to_owned(),
+                rrset_name: "test".to_owned(),
+                rrset_type: "A".to_owned(),
+                rrset_values: vec!["127.0.0.1".to_owned()],
+                rrset_ttl: None,
+            },
+            &api,
+        )
+        .await;
+
+        assert!(res.is_err());
+        assert_eq!(res.unwrap_err().as_ref().to_string(), "HTTP status client error (404 Not Found) for url (https://api.sandbox.gandi.net/v5/livedns/domains/pygoscelis-sandbox.org/records/test/A)");
+    }
+
+    #[tokio::test]
+    async fn apply_record_404() {
+        let pat = env::var("GANDI_V5_SANDBOX_PAT").unwrap();
+        let api = Api::build(crate::Endpoint::Sandbox, &pat).unwrap();
+
+        let res = livedns_apply(
+            crate::LiveDnsApplyCommands::Record {
+                fqdn: "pygoscelis-sandbox.org".to_owned(),
+                rrset_name: "test".to_owned(),
+                rrset_type: "A".to_owned(),
+                rrset_values: vec!["127.0.0.1".to_owned()],
+                rrset_ttl: None,
+            },
+            &api,
+        )
+        .await;
+
+        assert!(res.is_err());
+        assert_eq!(res.unwrap_err().as_ref().to_string(), "HTTP status client error (404 Not Found) for url (https://api.sandbox.gandi.net/v5/livedns/domains/pygoscelis-sandbox.org/records/test/A)");
+    }
+
+    #[tokio::test]
+    async fn delete_record_404() {
+        let pat = env::var("GANDI_V5_SANDBOX_PAT").unwrap();
+        let api = Api::build(crate::Endpoint::Sandbox, &pat).unwrap();
+
+        let res = livedns_delete(
+            crate::LiveDnsDeleteCommands::Record {
+                fqdn: "pygoscelis-sandbox.org".to_owned(),
+                rrset_name: "test".to_owned(),
+                rrset_type: "A".to_owned(),
+            },
+            &api,
+        )
+        .await;
+
+        assert!(res.is_err());
+        assert_eq!(res.unwrap_err().as_ref().to_string(), "HTTP status client error (404 Not Found) for url (https://api.sandbox.gandi.net/v5/livedns/domains/pygoscelis-sandbox.org/records/test/A)");
+    }
+}

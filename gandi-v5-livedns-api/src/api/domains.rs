@@ -93,7 +93,7 @@ mod tests {
 
         assert!(res.is_err());
 
-        assert_eq!(res.err().unwrap().as_ref().to_string(), "HTTP status client error (404 Not Found) for url (https://api.sandbox.gandi.net/v5/livedns/domains/pygoscelis-sandbox.org)");
+        assert_eq!(res.unwrap_err().as_ref().to_string(), "HTTP status client error (404 Not Found) for url (https://api.sandbox.gandi.net/v5/livedns/domains/pygoscelis-sandbox.org)");
     }
 
     #[tokio::test]
@@ -108,6 +108,6 @@ mod tests {
 
         assert!(res.is_err());
 
-        assert_eq!(res.err().unwrap().as_ref().to_string(), "HTTP status client error (403 Forbidden) for url (https://api.sandbox.gandi.net/v5/livedns/domains/pygoscelis-sandbox.org)");
+        assert_eq!(res.unwrap_err().as_ref().to_string(), "HTTP status client error (403 Forbidden) for url (https://api.sandbox.gandi.net/v5/livedns/domains/pygoscelis-sandbox.org)");
     }
 }

@@ -22,15 +22,15 @@ pub struct DomainInfo {
 
 impl Api {
     /// List of domains handled by LiveDNS
-    /// 
+    ///
     /// GET on <https://api.gandi.net/v5/livedns/domains>
-    /// 
+    ///
     /// Example:
     /// ```no_run
     /// let api = Api::build(Endpoint::Prod, "token")?;
-    /// 
+    ///
     /// let domains = api.domains().await?;
-    /// 
+    ///
     /// println!("{:?}", domains);
     /// ```
     pub async fn domains(&self) -> Result<Vec<Domain>, Box<dyn Error>> {
@@ -38,15 +38,15 @@ impl Api {
     }
 
     /// Show domain's properties
-    /// 
+    ///
     /// GET on <https://api.gandi.net/v5/livedns/domains/{fqdn}>
-    /// 
+    ///
     /// Example:
     /// ```no_run
     /// let api = Api::build(Endpoint::Prod, "token")?;
-    /// 
+    ///
     /// let domain_info = api.domain("example.org").await?;
-    /// 
+    ///
     /// println!("{:?}", domain_info);
     /// ```
     pub async fn domain(&self, fqdn: &str) -> Result<DomainInfo, Box<dyn Error>> {

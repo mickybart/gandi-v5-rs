@@ -19,7 +19,7 @@ pub struct Record {
 }
 
 /// Type used to create or update a single record
-/// 
+///
 /// Example:
 /// ```no_run
 /// let record = UpsertRecord { rrset_values: vec!["127.0.0.1".to_owned()], rrset_ttl: Some(300) };
@@ -34,15 +34,15 @@ pub struct UpsertRecord {
 
 impl Api {
     /// List records associated with a domain
-    /// 
+    ///
     /// GET on <https://api.gandi.net/v5/livedns/domains/{fqdn}/records>
-    /// 
+    ///
     /// Example:
     /// ```no_run
     /// let api = Api::build(Endpoint::Prod, "token")?;
-    /// 
+    ///
     /// let records = api.records("example.org").await?;
-    /// 
+    ///
     /// println!("{:?}", records);
     /// ```
     pub async fn records(&self, fqdn: &str) -> Result<Vec<Record>, Box<dyn Error>> {
@@ -52,16 +52,16 @@ impl Api {
     }
 
     /// List records named {rrset_name} associated with this domain
-    /// 
+    ///
     /// GET on <https://api.gandi.net/v5/livedns/domains/{fqdn}/records/{rrset_name}>
-    /// 
+    ///
     /// Example:
     /// ```no_run
     /// let api = Api::build(Endpoint::Prod, "token")?;
-    /// 
+    ///
     /// // get records for test.example.org
     /// let records = api.records_by_name("example.org", "test").await?;
-    /// 
+    ///
     /// println!("{:?}", records);
     /// ```
     pub async fn records_by_name(
@@ -75,16 +75,16 @@ impl Api {
     }
 
     /// Get a single single record with its name and type
-    /// 
+    ///
     /// GET on <https://api.gandi.net/v5/livedns/domains/{fqdn}/records/{rrset_name}/{rrset_type}>
-    /// 
+    ///
     /// Example:
     /// ```no_run
     /// let api = Api::build(Endpoint::Prod, "token")?;
-    /// 
+    ///
     /// // get TXT record for test.example.org
     /// let record = api.record_by_name_and_type("example.org", "test", "TXT").await?;
-    /// 
+    ///
     /// println!("{:?}", record);
     /// ```
     pub async fn record_by_name_and_type(
@@ -102,13 +102,13 @@ impl Api {
     }
 
     /// Create a new record whose name and type are defined by the path
-    /// 
+    ///
     /// POST on <https://api.gandi.net/v5/livedns/domains/{fqdn}/records/{rrset_name}/{rrset_type}>
-    /// 
+    ///
     /// Example:
     /// ```no_run
     /// let api = Api::build(Endpoint::Prod, "token")?;
-    /// 
+    ///
     /// // create multiple A records for test.example.org
     /// let record = UpsertRecord { rrset_values: vec!["10.0.0.1".to_owned(), "10.0.0.2".to_owned()], rrset_ttl: Some(300) };
     /// api.create_record_by_name_and_type("example.org", "test", "A", &record).await?;
@@ -131,13 +131,13 @@ impl Api {
     }
 
     /// Overwrites a single record with {rrset_name} and {rrset_type}
-    /// 
+    ///
     /// PUT on <https://api.gandi.net/v5/livedns/domains/{fqdn}/records/{rrset_name}/{rrset_type}>
-    /// 
+    ///
     /// Example:
     /// ```no_run
     /// let api = Api::build(Endpoint::Prod, "token")?;
-    /// 
+    ///
     /// // create multiple A records for test.example.org
     /// let record = UpsertRecord { rrset_values: vec!["10.0.0.1".to_owned(), "10.0.0.2".to_owned()], rrset_ttl: Some(300) };
     /// api.upsert_record_by_name_and_type("example.org", "test", "A", &record).await?;
@@ -160,13 +160,13 @@ impl Api {
     }
 
     /// Delete record with {rrset_name} and {rrset_type}
-    /// 
+    ///
     /// DELETE on <https://api.gandi.net/v5/livedns/domains/{fqdn}/records/{rrset_name}/{rrset_type}>
-    /// 
+    ///
     /// Example:
     /// ```no_run
     /// let api = Api::build(Endpoint::Prod, "token")?;
-    /// 
+    ///
     /// // delete A records for test.example.org
     /// api.delete_record_by_name_and_type("example.org", "test", "A").await?;
     /// ```
@@ -187,8 +187,8 @@ impl Api {
 
 #[cfg(test)]
 mod tests {
-    use std::env;
     use crate::{records::UpsertRecord, Api};
+    use std::env;
 
     #[tokio::test]
     async fn records_404() {
@@ -234,7 +234,9 @@ mod tests {
 
         let api = api.unwrap();
 
-        let res = api.record_by_name_and_type("pygoscelis-sandbox.org", "test", "A").await;
+        let res = api
+            .record_by_name_and_type("pygoscelis-sandbox.org", "test", "A")
+            .await;
 
         assert!(res.is_err());
 
@@ -251,8 +253,13 @@ mod tests {
 
         let api = api.unwrap();
 
-        let record = UpsertRecord { rrset_values: vec!["127.0.01".to_owned()], rrset_ttl: Some(300) };
-        let res = api.create_record_by_name_and_type("pygoscelis-sandbox.org", "test", "A", &record).await;
+        let record = UpsertRecord {
+            rrset_values: vec!["127.0.01".to_owned()],
+            rrset_ttl: Some(300),
+        };
+        let res = api
+            .create_record_by_name_and_type("pygoscelis-sandbox.org", "test", "A", &record)
+            .await;
 
         assert!(res.is_err());
 
@@ -269,8 +276,13 @@ mod tests {
 
         let api = api.unwrap();
 
-        let record = UpsertRecord { rrset_values: vec!["127.0.01".to_owned()], rrset_ttl: Some(300) };
-        let res = api.upsert_record_by_name_and_type("pygoscelis-sandbox.org", "test", "A", &record).await;
+        let record = UpsertRecord {
+            rrset_values: vec!["127.0.01".to_owned()],
+            rrset_ttl: Some(300),
+        };
+        let res = api
+            .upsert_record_by_name_and_type("pygoscelis-sandbox.org", "test", "A", &record)
+            .await;
 
         assert!(res.is_err());
 
@@ -287,7 +299,9 @@ mod tests {
 
         let api = api.unwrap();
 
-        let res = api.delete_record_by_name_and_type("pygoscelis-sandbox.org", "test", "A").await;
+        let res = api
+            .delete_record_by_name_and_type("pygoscelis-sandbox.org", "test", "A")
+            .await;
 
         assert!(res.is_err());
 

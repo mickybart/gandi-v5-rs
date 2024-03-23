@@ -28,7 +28,11 @@ The project is using rust exclusively.
 ### build
 
 ```bash
+# dev
 cargo build
+
+# release
+cargo build --release
 ```
 
 ### coverage

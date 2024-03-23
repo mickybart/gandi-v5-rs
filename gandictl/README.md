@@ -41,6 +41,26 @@ To use the Gandi Sandbox Api, use the flag `-s`.
 gandictl -s -h
 ```
 
+### Use cases
+#### Using as a DynamicDNS solution
+
+You can use a cronjob to update your public IP with a small script like:
+
+```bash
+set -e
+
+FQDN=example.org
+NAME=test
+
+export GANDI_V5_PAT="YOU_PERSONAL_ACCESS_TOKEN"
+
+# ipv4
+gandictl live-dns apply record $FQDN $NAME A --rrset-ttl 300 --rrset-values $(curl -s https://ipv4.seeip.org/)
+
+# ipv6
+gandictl live-dns apply record $FQDN $NAME AAAA --rrset-ttl 300 --rrset-values $(curl -s https://ipv6.seeip.org/)
+```
+
 ### Commands
 #### LiveDNS
 

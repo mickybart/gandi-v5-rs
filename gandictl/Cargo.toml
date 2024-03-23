@@ -2,6 +2,13 @@
 name = "gandictl"
 version = "0.1.0"
 edition = "2021"
+authors = ["mickybart <mickybart@pygoscelis.org>"]
+description = "gandictl controls the gandi.net management console"
+repository = "https://github.com/mickybart/gandi-v5-rs"
+readme = "README.md"
+license = "Apache-2.0"
+categories = ["command-line-utilities"]
+keywords = ["gandi"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

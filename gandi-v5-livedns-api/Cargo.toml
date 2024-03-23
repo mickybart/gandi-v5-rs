@@ -2,6 +2,13 @@
 name = "gandi-v5-livedns-api"
 version = "0.1.0"
 edition = "2021"
+authors = ["mickybart <mickybart@pygoscelis.org>"]
+description = "Gandi LiveDNS Api"
+repository = "https://github.com/mickybart/gandi-v5-rs"
+readme = "README.md"
+license = "Apache-2.0"
+categories = ["asynchronous", "api-bindings"]
+keywords = ["gandi"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

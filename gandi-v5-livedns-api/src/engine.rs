@@ -14,8 +14,11 @@ pub struct Engine {
 
 /// Used to select the endpoint required.
 pub enum Endpoint {
+    /// Gandi Production
     Prod,
+    /// Gandi Sandbox
     Sandbox,
+    /// Custom URL Api
     Custom(String),
 }
 

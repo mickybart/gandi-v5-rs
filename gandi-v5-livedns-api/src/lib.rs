@@ -1,3 +1,9 @@
+#![warn(
+    missing_docs,
+    rust_2018_idioms,
+)]
+#![forbid(unsafe_code)]
+
 //! Gandi LiveDNS Api
 //! 
 //! Provides an abstration on top of Gandi LiveDNS RESTful Api.

@@ -8,9 +8,13 @@ use serde::{Deserialize, Serialize};
 /// Type representing a record
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Record {
+    /// Name of the record
     pub rrset_name: String,
+    /// One of: "A", "AAAA", "ALIAS", "CAA", "CDS", "CNAME", "DNAME", "DS", "KEY", "LOC", "MX", "NAPTR", "NS", "OPENPGPKEY", "PTR", "RP", "SPF", "SRV", "SSHFP", "TLSA", "TXT", "WKS"
     pub rrset_type: String,
+    /// A list of values for this record
     pub rrset_values: Vec<String>,
+    /// The time in seconds that DNS resolvers should cache this record
     pub rrset_ttl: Option<u32>,
 }
 
@@ -22,7 +26,9 @@ pub struct Record {
 /// ```
 #[derive(Debug, Serialize)]
 pub struct UpsertRecord {
+    /// A list of values for this record
     pub rrset_values: Vec<String>,
+    /// The time in seconds that DNS resolvers should cache this record
     pub rrset_ttl: Option<u32>,
 }
 

@@ -1,9 +1,10 @@
 [workspace]
 resolver = "2"
 
-members = [
+members = [ "custom-ddns",
     "gandi-v5-livedns-api",
     "gandictl",
+    "custom-ddns",
 ]
 
 [profile.release]

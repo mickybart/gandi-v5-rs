@@ -1,0 +1,11 @@
+listen: '127.0.0.1:3000'
+default_rrset_ttl: 300
+whitelist:
+  example.org:
+    personal_access_token: TOKEN
+    records:
+    - rrset_name: test
+      rrset_type: A
+      rrset_ttl_max: 10800
+    authorizations:
+    - Basic dGVzdDoxMjM0

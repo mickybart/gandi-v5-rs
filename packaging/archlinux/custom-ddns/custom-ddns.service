@@ -1,0 +1,15 @@
+[Unit]
+Description=Start Custom Dynamic DNS Service provider
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=cddns
+Group=cddns
+DynamicUser=true
+WorkingDirectory=/etc/custom-ddns
+ExecStart=/usr/bin/custom-ddns
+
+[Install]
+WantedBy=multi-user.target

@@ -41,7 +41,7 @@ http://[USERNAME]:[PASSWORD]@192.168.0.10:3000/gandi/[DOMAIN]/home/A/[IP]
 ## Custom DDNS Service
 ### Configuration
 
-A config file is required and need to be created under `config/prod.yaml`.
+A config file is required and need to be created under `prod.yaml` or `$CDDNS_PROFILE.yaml`
 
 ```yaml
 listen: ''                    # IP:PORT
@@ -78,6 +78,7 @@ echo "Basic $(echo -n test:1234 | base64)"
 
 Custom Dynamic DNS Service uses a strong separation between the router and the DNS provider. This is mandatory to limit the attack surface if a malicious person is able to hack the router. Due to some lack of support or routers firmware upgrade not applied by customer, by using an explicit whitelist, we can protect all records of your zone except those whitelisted from an attacker.
 
+## Developers
 ### Build image
 
 *build from root folder (cd ..)*
@@ -88,9 +89,13 @@ docker build -t cddns:latest -f custom-ddns/Dockerfile .
 
 ### Run image
 
-Create `config` folder and add `prod.yaml` file.
+Create `prod.yaml` or `$CDDNS_PROFILE.yaml` file.
 
 ```bash
 # example with local.yaml provided in the project
-docker run -it --rm -v $(pwd)/custom-ddns/config:/config:ro -p 3000:3000 cddns
+docker run -it --rm -v $(pwd)/custom-ddns/config/local.yaml:/local.yaml:ro -p 3000:3000 cddns
 ```
+
+### Packaging
+
+see [packaging](../packaging/README.md)

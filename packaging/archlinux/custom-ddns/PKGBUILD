@@ -1,0 +1,39 @@
+# Maintainer: mickybart <mickybart at pygoscelis dot org>
+pkgname=custom-ddns-git
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="Custom Dynamic DNS service provider"
+arch=('x86_64')
+url="https://github.com/mickybart/gandi-v5-rs"
+license=('Apache-2.0')
+groups=()
+depends=()
+makedepends=('rustup')
+backup=('etc/custom-ddns/prod.yaml')
+source=("${pkgname}::git+https://github.com/mickybart/gandi-v5-rs"
+        'custom-ddns.service'
+        'prod.yaml'
+        'LICENSE')
+sha256sums=('SKIP'
+            '364277b08589ce3fd43df20a8264db06d6a5109abeec41dcb0b65faf78960f2b'
+            'f848e797c17d66b6f1c12e156c96c53ca6f586b75d5333b7d383a8ef69472c7d'
+            'c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4')
+# validpgpkeys=('B026EDFDDDEBC59E3F60966AF9E8AF21879815B6')
+
+build() {
+    cd "$pkgname"
+    cargo build --release -p custom-ddns
+}
+
+package() {
+    # custom-ddns bin
+    install -d "${pkgdir}"/usr/bin
+    install -m 755 -t "${pkgdir}"/usr/bin/ "${srcdir}"/$pkgname/target/release/custom-ddns
+
+    # configuration and service
+    install -Dm644 -t "${pkgdir}"/etc/custom-ddns "${srcdir}"/prod.yaml
+    install -Dm644 -t "${pkgdir}"/usr/lib/systemd/system "${srcdir}"/custom-ddns.service
+
+    # license
+    install -Dm644 -t "$pkgdir"/usr/share/licenses/$pkgname/LICENSE "${srcdir}"/LICENSE
+}

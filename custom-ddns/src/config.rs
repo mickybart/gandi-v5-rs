@@ -29,8 +29,8 @@ impl AppConfig {
         let cddns_profile = env::var("CDDNS_PROFILE").unwrap_or("prod".to_owned());
 
         Config::builder()
-            .add_source(File::with_name(&format!("config/{}.yaml", cddns_profile)).required(false))
-            .add_source(File::with_name("config/local.yaml").required(false))
+            .add_source(File::with_name(&format!("{}.yaml", cddns_profile)).required(false))
+            .add_source(File::with_name("local.yaml").required(false))
             .build()?
             .try_deserialize()
     }

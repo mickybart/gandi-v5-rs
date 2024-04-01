@@ -1,0 +1,13 @@
+# listen: '0.0.0.0:3000'             # interface and port to bind
+
+# default_rrset_ttl: 300             # default ttl in second if not specified with the request
+
+# whitelist:                         # whilelist records that can be updated.
+#   example.org:                     # a domain to manage
+#     personal_access_token: TOKEN   # Gandi personal access token <https://docs.gandi.net/en/managing_an_organization/organizations/personal_access_token.html#personal-access-tokens>
+#     records:                       # a list of record that can be updated
+#     - rrset_name: test             # eg: 'test' (test.example.org)
+#       rrset_type: A                # 'A' for ipv4, 'AAAA' for ipv6
+#       rrset_ttl_max: 10800         # max ttl that can be set (in second)
+#     authorizations:                # a list of "who" is authorized to update this domain and relative records
+#     - Basic dGVzdDoxMjM0           # eg: 'Basic dGVzdDoxMjM0' where dGVzdDoxMjM0 is equal to [USERNAME]:[PASSWORD] encoded in base64

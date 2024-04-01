@@ -17,7 +17,7 @@ axum = { version = "0.7.4", features = ["tracing"] }
 config = "0.14.0"
 gandi-v5-livedns-api = { path = "../gandi-v5-livedns-api" }
 serde = "1.0.197"
-tokio = { version = "1.36.0", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "1.36.0", features = ["macros", "rt-multi-thread", "signal"] }
 tower-http = { version = "0.5.2", features = ["trace"] }
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }

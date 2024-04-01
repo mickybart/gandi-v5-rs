@@ -4,6 +4,7 @@ mod health;
 use std::{error::Error, sync::Arc};
 
 use axum::{routing::get, Router};
+use tokio::signal;
 use tower_http::trace::{self, TraceLayer};
 use tracing::Level;
 
@@ -30,9 +31,35 @@ pub(crate) async fn run_app() -> Result<(), Box<dyn Error>> {
     let listener = tokio::net::TcpListener::bind(&shared_config.listen).await?;
 
     tracing::info!("listening on {}", listener.local_addr()?);
-    axum::serve(listener, app).await?;
+    axum::serve(listener, app)
+        .with_graceful_shutdown(shutdown_signal())
+        .await?;
 
     Ok(())
+}
+
+async fn shutdown_signal() {
+    let ctrl_c = async {
+        signal::ctrl_c()
+            .await
+            .expect("failed to install Ctrl+C handler");
+    };
+
+    #[cfg(unix)]
+    let terminate = async {
+        signal::unix::signal(signal::unix::SignalKind::terminate())
+            .expect("failed to install signal handler")
+            .recv()
+            .await;
+    };
+
+    #[cfg(not(unix))]
+    let terminate = std::future::pending::<()>();
+
+    tokio::select! {
+        _ = ctrl_c => {},
+        _ = terminate => {},
+    }
 }
 
 mod observability {

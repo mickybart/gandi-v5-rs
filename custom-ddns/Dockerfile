@@ -3,7 +3,8 @@ FROM rust:1.76 as builder
 
 WORKDIR /usr/src/
 
-ENV RUSTFLAGS="-C target-feature=+crt-static"
+ARG RUSTUP_TARGET="x86_64-unknown-linux-gnu"
+ARG RUSTFLAGS="-C target-feature=+crt-static"
 
 COPY . .
 
@@ -11,7 +12,7 @@ RUN --mount=type=cache,id=rustcache,target=/usr/local/cargo/registry --mount=typ
 # unwind not required
 sed -i 's/^# panic/panic/' Cargo.toml
 
-cargo build --release --target x86_64-unknown-linux-gnu -p custom-ddns
+cargo build --release --target $RUSTUP_TARGET -p custom-ddns
 EOF
 
 RUN --mount=type=cache,id=rustcache,target=./target <<EOF

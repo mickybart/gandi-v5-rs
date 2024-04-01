@@ -2,11 +2,11 @@
 
 The main goal of this project is to provide:
 - libraries on top of [Gandi V5 API](https://api.gandi.net/docs/reference/)
-    - [LiveDNS Api](https://api.gandi.net/docs/livedns/)
+    - [LiveDNS Api](gandi-v5-livedns-api/README.md)
 - command line tool to control the gandi.net management console
     - [gandictl](gandictl/README.md)
 - a service to update DNS entry for DynamicDNS support
-    - *To be released*
+    - [Custom Dynamic DNS service](custom-ddns/README.md)
 
 Currently, there is no target to cover all APIs provided by Gandi V5. This project is mainly build to share a working base and finally provides a DDNS service usable with some TP-Link routers and any custom DDNS compatible routers.
 
@@ -19,7 +19,7 @@ Contribution or submitted issues will be helpful to determine the global interes
 ## Tools
 
 - [gandictl](gandictl/README.md) 
-- DynamicDNS/DDNS (*To be released*)
+- [Custom Dynamic DNS service](custom-ddns/README.md)
 
 ## Development
 

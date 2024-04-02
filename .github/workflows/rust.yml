@@ -1,0 +1,21 @@
+name: Rust
+
+on:
+  push:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - run: |
+        rustup update stable
+        rustup default stable
+    - name: Build
+      run: cargo build
+    # gandi sandbox is currently (04-02-2024) broken
+    # - name: Run coverage
+    #   run: cargo tarpaulin --engine llvm --out Html --skip-clean --target-dir target/coverage

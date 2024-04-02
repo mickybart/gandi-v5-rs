@@ -22,6 +22,8 @@ sha256sums=('SKIP'
 
 build() {
     cd "$pkgname"
+
+    export RUSTFLAGS="--remap-path-prefix $HOME=~"
     cargo build --release -p custom-ddns
 }
 
@@ -30,10 +32,10 @@ package() {
     install -d "${pkgdir}"/usr/bin
     install -m 755 -t "${pkgdir}"/usr/bin/ "${srcdir}"/$pkgname/target/release/custom-ddns
 
-    # configuration and service
+    # configuration and systemd
     install -Dm644 -t "${pkgdir}"/etc/custom-ddns "${srcdir}"/prod.yaml
     install -Dm644 -t "${pkgdir}"/usr/lib/systemd/system "${srcdir}"/custom-ddns.service
 
     # license
-    install -Dm644 -t "$pkgdir"/usr/share/licenses/$pkgname/LICENSE "${srcdir}"/LICENSE
+    install -Dm644 -t "$pkgdir"/usr/share/licenses/$pkgname/ "${srcdir}"/LICENSE
 }

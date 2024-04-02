@@ -61,6 +61,8 @@ gandictl live-dns apply record $FQDN $NAME A --rrset-ttl 300 --rrset-values $(cu
 gandictl live-dns apply record $FQDN $NAME AAAA --rrset-ttl 300 --rrset-values $(curl -s https://ipv6.seeip.org/)
 ```
 
+In [packaging](../packaging), an alternative with systemd, by using a service and a timer, is available.
+
 ### Commands
 #### LiveDNS
 
@@ -82,3 +84,7 @@ Options:
   -h, --help  Print help
 
 ```
+
+## Packaging
+
+see [packaging](../packaging/README.md)

@@ -33,6 +33,6 @@ makepkg # -i
 - gandictl-git: gandictl controls the gandi.net management console
 - gandictl-ddns-git: Gandi Dynamic DNS Updater
 
-To use Gandi Dynamic DNS Updater:
+To use Gandi Dynamic DNS Updater (will run every 1 hour to update your public IP if required):
 - edit `/etc/conf.d/gandictl-ddns`
 - systemctl enable gandictl-ddns.timer

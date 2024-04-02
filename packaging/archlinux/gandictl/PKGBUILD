@@ -25,6 +25,8 @@ sha256sums=('SKIP'
 build() {
     cd "$pkgname"
 
+    rustup default stable
+
     export RUSTFLAGS="--remap-path-prefix $HOME=~"
     cargo build --release -p gandictl
 }

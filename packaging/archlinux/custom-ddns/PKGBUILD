@@ -1,6 +1,6 @@
 # Maintainer: mickybart <mickybart at pygoscelis dot org>
 pkgname=custom-ddns-git
-pkgver=0.1.0
+pkgver=r36.c1821c3
 pkgrel=1
 pkgdesc="Custom Dynamic DNS service provider"
 arch=('x86_64')
@@ -19,6 +19,11 @@ sha256sums=('SKIP'
             'f848e797c17d66b6f1c12e156c96c53ca6f586b75d5333b7d383a8ef69472c7d'
             'c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4')
 # validpgpkeys=('B026EDFDDDEBC59E3F60966AF9E8AF21879815B6')
+
+pkgver() {
+  cd "$pkgname"
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
 
 build() {
     cd "$pkgname"

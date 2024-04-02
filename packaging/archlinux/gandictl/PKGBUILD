@@ -1,7 +1,7 @@
 # Maintainer: mickybart <mickybart at pygoscelis dot org>
 pkbbase=gandictl-git
 pkgname=('gandictl-git' 'gandictl-ddns-git')
-pkgver=0.1.0
+pkgver=r36.c1821c3
 pkgrel=1
 arch=('x86_64')
 url="https://github.com/mickybart/gandi-v5-rs"
@@ -21,6 +21,11 @@ sha256sums=('SKIP'
             '0cae7e0174e4fea035f53f0b1f04f54e717781c226617e43a49402e647c8e214'
             '58a921d4834ca3ac829f5f35ba22ed855cd632d04cd2ebd4cb465de2693b3461')
 # validpgpkeys=('B026EDFDDDEBC59E3F60966AF9E8AF21879815B6')
+
+pkgver() {
+  cd "$pkgname"
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
 
 build() {
     cd "$pkgname"
@@ -46,6 +51,7 @@ package_gandictl-git() {
 package_gandictl-ddns-git() {
     pkgdesc="Gandi Dynamic DNS Updater"
     backup=('etc/conf.d/gandictl-ddns')
+    depends=('gandictl-git')
 
     # configuration and systemd for Dynamic DNS Update
     install -Dm644 -t "${pkgdir}"/etc/conf.d/ "${srcdir}"/gandictl-ddns

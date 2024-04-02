@@ -54,3 +54,7 @@ cargo tarpaulin --engine llvm --out Html --skip-clean --target-dir target/covera
 ```bash
 cargo doc
 ```
+
+## Packaging
+
+- [archlinux](packaging/README.md)
